@@ -95,7 +95,7 @@ services.service('brandsManager', [ '$http', '$q', 'URLS', function($http, $q, U
 	            var params = { pageSize: 500 };
 
 	            $http( {
-	                url: URLS.BASE_URL + 'brands/', 
+	                url: URLS.OPEN_URL + 'brands/', 
 	                method: 'GET',
 	                params: params 
 	                } )
@@ -143,7 +143,7 @@ services.service('itemsManager', ['$http', '$q', 'Item', 'URLS', function($http,
             var params = { imageType: 'LargeImage' };
 
             $http( {
-                url: URLS.BASE_URL + 'items/' + itemId, 
+                url: URLS.OPEN_URL + 'items/' + itemId, 
                 method: 'GET',
                 params: params 
                 } )
@@ -184,7 +184,7 @@ services.service('itemsManager', ['$http', '$q', 'Item', 'URLS', function($http,
             	params['brand'] = brand ;
 
             $http( {
-                url: URLS.BASE_URL + 'items/', 
+                url: URLS.OPEN_URL + 'items/', 
                 method: 'GET',
                 params: params 
                 } )
@@ -238,7 +238,6 @@ services.service('itemsManager', ['$http', '$q', 'Item', 'URLS', function($http,
             return deferred.promise;
         },
         
-        /*  This function is useful when we got somehow the item data and we wish to store it or update the pool and get an item instance in return */
         setItem: function(itemData) {
             var scope = this;
             var item = this._search(itemData.id);

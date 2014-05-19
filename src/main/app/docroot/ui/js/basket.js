@@ -33,7 +33,7 @@ services.factory('BasketItem', [  function( ){
 
 }]);
 
-services.service('basketService', [ '$http', '$q', 'URLS', 'BasketItem', function ($http, $q, URLS, BasketItem) {
+services.service('basketService', [ '$http', '$q', 'URLS', 'BasketItem', 'Session', function ($http, $q, URLS, BasketItem, Session) {
     var basketService = 
     {
       _items: {},
@@ -61,7 +61,7 @@ services.service('basketService', [ '$http', '$q', 'URLS', 'BasketItem', functio
           var scope = this;
           this._items = {};
           deferred.resolve(scope._items);
-          /*
+          
           $http.get(URLS.BASE_URL + 'basket/')
               .success(function(data, status, headers, config) {
                    var items = []; 
@@ -74,7 +74,7 @@ services.service('basketService', [ '$http', '$q', 'URLS', 'BasketItem', functio
               .error(function(data, status, headers, config) {
                   deferred.reject();
               });
-              */
+              
           return deferred.promise;
       },
       
@@ -87,8 +87,18 @@ services.service('basketService', [ '$http', '$q', 'URLS', 'BasketItem', functio
           'quantity': quantity,
           'price': price
         };
+        
+        var headers = {
+        		'Content-Type': 'application/json',
+        		Accept: 'application/json'
+        			
+        		//,'Cache-Control': 'no-cache'
+        		//,'Accept': '*/*'
+        		//,'x-user-id': Session.getUser() 
+        		//,'access_token':  Session.getToken()
+        }
 
-        $http.post(URLS.BASE_URL + 'basket/', basketItem)
+        $http( { url:URLS.BASE_URL + 'basket/', method: 'POST', data: basketItem, headers: headers, cache:false})
         	.success(function(data, status, headers, config) {
                 deferred.resolve();
             })

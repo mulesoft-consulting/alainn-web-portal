@@ -6,18 +6,18 @@ var controllers = angular.module('controllers', []);
 
 
 controllers.controller('ApplicationController', 
-		function ($scope, $rootScope, itemsManager, basketService, Session, AUTH_EVENTS, AuthService, $modal) {
+		function ($scope, $rootScope, $location, $http, URLS, $state, itemsManager, basketService, Session, AUTH_EVENTS, AuthService, $modal) {
 	$scope.user = {
-		username: Session.get(),
+		username: Session.getUser(),
 		sessionIsActive: Session.isActive()
 	} 
-	  	
+	
 	basketService.loadAllItems().then(function(){
 	    $rootScope.$broadcast('basketLoaded');
 	});
 
 	$scope.$on(AUTH_EVENTS.loginSuccess, function(){
-		$scope.user.username = Session.get();
+		$scope.user.username = Session.getUser();
 		$scope.user.sessionIsActive = Session.isActive();
 	});
 	$scope.$on(AUTH_EVENTS.logoutSuccess, function(){
@@ -40,19 +40,14 @@ controllers.controller('ApplicationController',
 	      templateUrl: 'modal.login.html',
 	      controller: ModalLoginController,
 	      size: size
-	      /*,
-	      resolve: {
-	        items: function () {
-	          return $scope.items;
-	        }
-	      }*/
 	    });
 
 	    modalInstance.result.then(function (credentials) {
-	    	//
+	    	
 	    }, function () {
-	    	//$log.info('Modal dismissed at: ' + new Date());
+	    	
 	    });
+
 	};
 	
 });
@@ -109,7 +104,8 @@ controllers.controller('CatalogListCtrl', ['$scope', '$location', '$stateParams'
 	
     $scope.browse= function(direction){
     	var newUrl = (direction=='next' ? $scope.nextPageLink.href : $scope.prevPageLink.href );
-    	newUrl = newUrl.replace( 'localhost:8082', 'alainn-api-qa.qa2.cloudhub.io')
+    	newUrl = newUrl.replace( 'localhost:8082', 'alainn-api-qa.qa2.cloudhub.io');
+    	newUrl = newUrl.replace( ':8082', '');
 
     	itemsManager.loadItemsByUrl( newUrl ).then(function(response) {
     		navigation.last(newUrl);
@@ -276,15 +272,30 @@ controllers.controller('WishlistCtrl', ['$scope', 'wishlistService',
 
 
 controllers.controller('LoginController', 
-		function ($scope, $rootScope, AuthService, AUTH_EVENTS) {
-			$scope.credentials = { username: 'a name', password: 'a password' };
-			$scope.login = function(credentials){
+		function ($scope, $rootScope, $modal, AuthService, AUTH_EVENTS) {
+			$scope.credentials = { username: '', password: '' };
+			$scope.ok = function(credentials){
 				if ( AuthService.login(credentials) ){
 				    $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
 				} else{
 					$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
 				}
-			}
+			};
+			$scope.register = function (size) {
+			    var modalInstance = $modal.open({
+			      templateUrl: 'modal.registration.html',
+			      controller: ModalRegistrationController,
+			      size: size
+			    });
+
+			    modalInstance.result.then(function (registration) {
+			    	alert('reg:'+JSON.stringify(registration));
+			    	$scope.credentials.username = registration.username;
+			    	$scope.credentials.password = registration.password;
+			    }, function () {
+			    	//$log.info('Modal dismissed at: ' + new Date());
+			    });
+			};
 		}
 	);
 

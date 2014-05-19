@@ -20,9 +20,9 @@ var app = angular.module('myApp', [
 
 
 app.constant( 'URLS', {
-//  BASE_URL: 'http://localhost:8081/api/'
-//  BASE_URL: 'https://alainn-api-qa.qa2.cloudhub.io/omni-channel-api/v1.0/'
 	BASE_URL: 'https://alainn-api-stg.stg.cloudhub.io/omni-channel-api/v1.0/'
+	, OPEN_URL: 'https://alainn-api-stg.stg.cloudhub.io/open/omni-channel-api/v1.0/'
+	, ACCESS_TOKEN: 'http://alainn-api-stg.stg.cloudhub.io/access-token'
 
 });
 
@@ -38,13 +38,19 @@ app.constant('AUTH_EVENTS', {
 });
 
 
-app.factory('AuthInterceptor', function ($rootScope, $q) {
+app.factory('AuthInterceptor', function ($rootScope, $q, Session) {
 	return {
 		// optional method
 		request: function(config) {
 	        // do something on success
-			config.headers['x-user-id']=28;
-			config.headers['access_token']='YaxwM9cT50SEVHg7A8CBmurfafXhE9d0x0VLzc5iPL_GBWfnyG0cQQMTYwZGx';
+			
+			if ( Session.isActive() ){
+				var user = Session.getUser();
+				var token = Session.getToken();
+				config.headers['x-user-id']=user;
+				config.headers['access_token']=token;
+			}
+			
 			return config || $q.when(config);
 		}
 	}
@@ -102,23 +108,22 @@ app.config([ '$routeProvider', '$stateProvider', '$urlRouterProvider',
           authenticate: false
         })
         ;
-      
-
   }]);
 
 app.run( function($rootScope, $state, $location, AuthService, AUTH_EVENTS ) {
-	
+
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
     	var authenticate = ( !(toState.authenticate===undefined) && toState.authenticate);
 
+    	$rootScope.currentState = toState.url;
+    	$rootScope.current = $location.$$url;
+	  	
+    	
     	if ( authenticate && !AuthService.isAuthenticated() ){
+        	// User isn’t authenticated
     		$rootScope.toState = toState.name;
     		$rootScope.fromState = fromState.name;
-        	// User isn’t authenticated
-    		// $state.transitionTo("login");
     		$location.path('/login');
-    		//$state.transitionTo('login');
-            //event.preventDefault(); 
           }
     });
     $rootScope.$on(AUTH_EVENTS.loginSuccess, function(){

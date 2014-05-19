@@ -1,7 +1,7 @@
 
 var ModalLoginController = function ($scope, $rootScope, $modal, $modalInstance, $interval, AuthService, AUTH_EVENTS) {
 
-	$scope.credentials = { username: '', password: '' };
+	$scope.credentials = { username: 'mjuan@mulesoft.com', password: 'xxx' };
 	$scope.message = "";
 	
 	$scope.onChange = function(){
@@ -25,19 +25,23 @@ var ModalLoginController = function ($scope, $rootScope, $modal, $modalInstance,
 	  };
 	               
 	$scope.ok = function () {
+		this.clearAlerts();
 		$scope.alerts.push({msg: 'Authenticating..'});
 		
-		if ( AuthService.login($scope.credentials) ){
-			$scope.alerts.push({type: 'success', msg: 'Welcome!'});
-			$modalInstance.close($scope.credentials);
-		    $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-		    
-		} else{
-			this.clearAlerts();
-			$scope.alerts.push({type: 'danger', msg: 'Invalid credentials'});
-			$interval($scope.clearAlerts, 2200, 0);
-			$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-		};
+		AuthService.login($scope.credentials).then(function(authResults){
+			$scope.clearAlerts();
+			if ( authResults.succesful ){
+				$scope.alerts.push({type: 'success', msg: 'Welcome' });
+				$modalInstance.close($scope.credentials);
+			    $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+			}else{
+				this.clearAlerts();
+				$scope.alerts.push({type: 'danger', msg: authResults.message });
+				$interval($scope.clearAlerts, 2200, 0);
+				$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+			}
+				
+		});
 	};
 
 	$scope.cancel = function () {
@@ -49,16 +53,9 @@ var ModalLoginController = function ($scope, $rootScope, $modal, $modalInstance,
 	      templateUrl: 'modal.registration.html',
 	      controller: ModalRegistrationController,
 	      size: size
-	      /*,
-	      resolve: {
-	        items: function () {
-	          return $scope.items;
-	        }
-	      }*/
 	    });
 
 	    modalInstance.result.then(function (registration) {
-	    	alert('reg:'+JSON.stringify(registration));
 	    	$scope.credentials.username = registration.username;
 	    	$scope.credentials.password = registration.password;
 	    }, function () {

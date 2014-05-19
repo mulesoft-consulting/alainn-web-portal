@@ -22,64 +22,30 @@ app.directive('formAutofillFix', function ($timeout) {
     }
   };
 });
-
 /*
-
-var EMAIL_REGEXP = /\A[^@]+@([^@\.]+\.)+[^@\.]+\z/;
-app.directive('email', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, elm, attrs, ctrl) {
-      ctrl.$parsers.unshift(function(viewValue) {
-        if (EMAIL_REGEXP.test(viewValue)) {
-          // it is valid
-          ctrl.$setValidity('email', true);
-          return viewValue;
-        } else {
-          // it is invalid, return undefined (no model update)
-          ctrl.$setValidity('email', false);
-          return undefined;
-        }
-      });
-    }
-  };
-});
+var ngShowDirective = ['$animate', function($animate) {
+	  return function(scope, element, attr) {
+	    scope.$watch(attr.ngShow, function ngShowWatchAction(value){
+	      $animate[toBoolean(value) ? 'removeClass' : 'addClass'](element, 'ng-hide');
+	    });
+	  };
+	}];
 */
-
-var INTEGER_REGEXP = /^\-?\d+$/;
-app.directive('integer', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, elm, attrs, ctrl) {
-      ctrl.$parsers.unshift(function(viewValue) {
-        if (INTEGER_REGEXP.test(viewValue)) {
-          // it is valid
-          ctrl.$setValidity('integer', true);
-          return viewValue;
-        } else {
-          // it is invalid, return undefined (no model update)
-          ctrl.$setValidity('integer', false);
-          return undefined;
-        }
-      });
-    }
-  };
+app.directive('isActive', function($animate, $location) {
+    return  function(scope, element, attrs) {
+//        	if ( attrs.isActive=='true' ){
+//                element.addClass('active');
+//        	}
+//        	scope.$watch(attrs.isActive, function ngShowWatchAction(value){
+//        		$animate[value.indexOf(attrs.current)==0 ? 'addClass' : 'removeClass'](element, 'active');
+//      	    });
+//    		scope.$watch(attrs.isActive, function(value){
+//    			alert(value);
+//    		})
+    		scope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+    			$animate[toState.url.indexOf(attrs.current)==0 ? 'addClass' : 'removeClass'](element, 'active');
+    		});
+        
+    };
 });
 
-var FLOAT_REGEXP = /^\-?\d+((\.|\,)\d+)?$/;
-app.directive('smartFloat', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, elm, attrs, ctrl) {
-      ctrl.$parsers.unshift(function(viewValue) {
-        if (FLOAT_REGEXP.test(viewValue)) {
-          ctrl.$setValidity('float', true);
-          return parseFloat(viewValue.replace(',', '.'));
-        } else {
-          ctrl.$setValidity('float', false);
-          return undefined;
-        }
-      });
-    }
-  };
-});

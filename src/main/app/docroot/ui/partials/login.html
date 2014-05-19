@@ -1,50 +1,22 @@
-<div class="bs-example">
-<form role="form" name="form1">
-  <div class="form-group">
-  	<p>Welcome : <span>{{credentials.username}}</span></p>
-    <label for="exampleInputEmail1">Mail</label>
-    <input type="text" placeholder="Enter name"  class="form-control" ng-model="credentials.username" required>
-  </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Password</label>
-    <input type="password" placeholder="Password" id="exampleInputPassword1" class="form-control" ng-model="credentials.password" required>
-  </div>
-  <button class="btn btn-default" type="submit" ng-click="login(credentials)" ng-disabled="form1.$invalid">Submit</button>
-  <p>{{msgtxt}}</p>
-</form>
-</div>
-<!-- 
-<div class="container" style="width: 15em">
-    <form class="form-horizontal" ng-submit="login(credentials)" >
-      <h2>Sign In</h2>
-      <div class="control-group">
-        <input value=username type="text" placeholder="Username" ng-model="credentials.username" />
-        <hr>
-      </div>
-      <div class="control-group">
-        <input value=password type="password" placeholder="Password" ng-model="credentials.password" />
-      </div>
-      <div class="control-group">
-        <input class="btn btn-primary" type="submit" value="Sign In" ng-click="login(credentials)" />
-        <button type="submit">Login</button>
-      </div>
-    </form>
-</div>
- -->
-<!-- 
-<HR>
-  <iframe src="sink.html" name="sink"
-        style="display:none"></iframe>
-<form name="loginForm"
-      action="sink.html" target="sink" method="post"
-      ng-submit="login(credentials)"
-      novalidate form-autofill-fix>
-  <label for="username">Username:</label>
-  <input type="text" id="username"
-         ng-model="credentials.username">
-  <label for="password">Password:</label>
-  <input type="password" id="password"
-         ng-model="credentials.password">
-  <button type="submit">Login</button>
-</form>
- -->
+<div class="modal-header">
+            <h3 class="modal-title">Login</h3>
+        </div>
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+        <div class="modal-body">
+            <form role="form" name="form1">
+		  <div class="form-group">
+		  	<p>Welcome : <span>{{credentials.username}}</span></p>
+		    <label for="exampleInputEmail1">Username</label>
+		    <input type="text" placeholder="Enter name"  class="form-control" ng-model="credentials.username" required ng-change="onChange()">
+		  </div>
+		  <div class="form-group">
+		    <label for="exampleInputPassword1">Password</label>
+		    <input type="password" placeholder="Password" id="exampleInputPassword1" class="form-control" ng-model="credentials.password" required ng-change="onChange()">
+		  </div>
+		</form>
+        </div>
+		Not a user? <a ng-click="register()">register here</a>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok(credentials)">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
