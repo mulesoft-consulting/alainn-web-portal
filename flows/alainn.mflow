@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="alainn">
+    <global-element name="HTTP\HTTPS" type="org.mule.tooling.ui.modules.core.global.httpsConnector" entity-id="HTTP-HTTPS#1">
+        <properties>
+            <property name="reuseAddress"/>
+            <property name="enableCookies"/>
+            <property name="serverSoTimeout" value="10000"/>
+            <property name="failOnUnresolvedHost"/>
+            <property name="socketSoLinger" value="0"/>
+            <property name="clientSoTimeout" value="10000"/>
+            <property name="socketMaxWait"/>
+            <property name="cookieSpec" value="netscape"/>
+            <property name="receiveBufferSize" value="0"/>
+            <property name="proxyHostname"/>
+            <property name="name" value="httpsConnector"/>
+            <property name="dynamicNotification"/>
+            <property name="sendBufferSize" value="0"/>
+            <property name="ENABLE_MODE_SWITCH"/>
+            <property name="auxiliary;index" value="1"/>
+            <property name="proxyPassword"/>
+            <property name="proxyUsername"/>
+            <property name="receiveBacklog" value="0"/>
+            <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/https/connector"/>
+            <property name="validateConnections" value="true"/>
+            <property name="label"/>
+            <property name="sendTcpNoDelay"/>
+            <property name="keepAlive"/>
+            <property name="proxyPort"/>
+            <property name="dispatcherPoolFactory-ref"/>
+            <property name="connectionTimeout"/>
+            <property-collection name="@http://www.mulesoft.org/schema/mule/https/tls-key-store;0">
+                <property name="path" value="keystore.jks"/>
+                <property name="storePassword" value="changeit"/>
+                <property name="keyPassword" value="changeit"/>
+                <property name="auxiliary;index" value="2"/>
+                <property name="auxiliary;wrapIn" value="2"/>
+            </property-collection>
+        </properties>
+    </global-element>
+    <flow SubFlow="false" name="ui" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="183b4ab3-eec5-4635-9ce1-a5ed843f08e3">
+        <properties>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="3"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#1">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <endpoint direction="Inbound" name="localhost/ui" type="http://www.mulesoft.org/schema/mule/http/endpoint" entity-id="HTTP#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="port" value="${https.port}"/>
+                    <property name="contentType"/>
+                    <property name="password"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="exchange-pattern" value="request-response"/>
+                    <property name="path" value="ui"/>
+                    <property name="encoding"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="auxiliary;index" value="4"/>
+                    <property name="connector-ref-outbound" value="httpsConnector"/>
+                    <property name="mimeType"/>
+                    <property name="responseTimeout"/>
+                    <property name="host" value="localhost"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="followRedirects"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/https/endpoint"/>
+                    <property name="keepAlive"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="ref"/>
+                    <property name="httpLabel"/>
+                    <property name="transformer-refs"/>
+                    <property name="address"/>
+                    <property name="method"/>
+                    <property name="user"/>
+                    <property name="connector-ref" value="httpsConnector"/>
+                </properties>
+            </endpoint>
+            <unknown description="false" index="5" entity-id="unknown#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <content>&lt;https:static-resource-handler xmlns:https=&quot;http://www.mulesoft.org/schema/mule/https&quot; resourceBase=&quot;${app.home}/docroot/ui&quot; defaultFile=&quot;index.html&quot;/&gt;</content>
+            </unknown>
+        </lane>
+    </flow>
+</mule-configuration>

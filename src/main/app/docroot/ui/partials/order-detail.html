@@ -1,0 +1,20 @@
+this is the order 
+
+		<p>{{order.id}}</p>
+        <p>Date: {{order.date}}</p> 
+        <p>Total:{{order.total}}</p>
+        <p>Pickup location: {{order.pickupLocation}}</p>
+        
+        <p>Items: </p>
+<div class="span10" >
+    <ul class="items">
+      <li ng-repeat="orderItem in orderItems"
+          class="thumbnail item-listing">
+        <a class="thumb"><img ng-src="{{orderItem.getThumbUrl() | https}}"></a>
+        <a >{{orderItem.name}}</a> 
+        	<p>Quantity: {{orderItem.quantity}}</p>
+        <p>{{orderItem.summary}}</p>
+      </li>
+    </ul>
+  </div>
+ 

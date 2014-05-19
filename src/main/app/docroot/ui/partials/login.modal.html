@@ -1,0 +1,24 @@
+	<script type="text/ng-template" id="modal.login.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Login</h3>
+        </div>
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+        <div class="modal-body">
+            <form role="form" name="form1">
+		  <div class="form-group">
+		  	<p>Welcome : <span>{{credentials.username}}</span></p>
+		    <label for="exampleInputEmail1">Username</label>
+		    <input type="text" placeholder="Enter name"  class="form-control" ng-model="credentials.username" required ng-change="onChange()">
+		  </div>
+		  <div class="form-group">
+		    <label for="exampleInputPassword1">Password</label>
+		    <input type="password" placeholder="Password" id="exampleInputPassword1" class="form-control" ng-model="credentials.password" required ng-change="onChange()">
+		  </div>
+		</form>
+        </div>
+		Not a user? <a ng-click="register()">register here</a>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>

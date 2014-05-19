@@ -1,0 +1,18 @@
+#%RAML 0.8
+---
+title: Api 2
+version: 1
+baseUri: https://localhost:8081/api2/{version}/ 
+
+/res:
+  description: res1
+  displayName: getRes1
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                a: 1
+              }

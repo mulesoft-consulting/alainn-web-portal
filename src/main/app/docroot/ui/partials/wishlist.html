@@ -1,0 +1,17 @@
+this is the wishlist
+
+<div class="span10" ng-hide="isEmpty" >
+    <ul class="items">
+      <li ng-repeat="sku in wishlist"
+          class="thumbnail item-listing">
+        <a class="thumb"><img ng-src="{{sku.firstImage().href | https}}"></a>
+        <a >{{sku.name}}</a> 
+        	&nbsp; <button ng-click="removeFromWishlist(sku)">delete</button></p>
+        <p>{{sku.summary}}</p>
+
+      </li>
+    </ul>
+  </div>
+  <div class="span10" ng-show="isEmpty" >
+  	it's empty!! add some items ..
+  </div>

@@ -1,0 +1,25 @@
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span2">
+    
+    	<form novalidate >
+		   Brand: <input type="text" ng-model="brand" typeahead="value for value in brands | filter:$viewValue | limitTo:8" class="form-control">
+	    	Text:	<input ng-model="query">
+	      	<img ng-src="img/search.png" ng-click="submit()"/>
+	  </form><BR>
+	</div>
+    <div class="span10">
+      <!--Body content-->
+      <ul class="items">
+        <li ng-repeat="item in items"
+            class="thumbnail item-listing">
+          <a href="#/items/{{item.id}}" class="thumb"><img ng-src="{{item.getThumbUrl() | https}}"></a>
+          <a href="#/items/{{item.id}}">{{item.name}}</a>
+          <p>({{item.brand}}) {{item.summary}}</p>
+          
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div ng-include src="'partials/browse.include.html'"></div>
+</div>

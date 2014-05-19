@@ -1,0 +1,16 @@
+these are my orders
+
+<div class="span10" ng-hide="noOrders" >
+    <ul class="items">
+      <li ng-repeat="order in orders" class="thumbnail item-listing">
+        <a href="#/orders/{{order.id}}">{{order.id}}</a>
+        <p>Date: {{order.date}}</p> 
+        <p>Total:{{order.total}}</p>
+        <p>Pickup location:{{order.pickupLocation}}</p>
+      </li>
+    </ul>
+  </div>
+  <div class="span10"  >
+  (esto se muestra cuando no hay ordenes)
+  	no orders, purchase something
+  </div>
