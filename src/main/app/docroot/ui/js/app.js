@@ -20,9 +20,10 @@ var app = angular.module('myApp', [
 
 
 app.constant( 'URLS', {
-	BASE_URL: 'https://alainn-api-stg.stg.cloudhub.io/omni-channel-api/v1.0/'
-	, OPEN_URL: 'https://alainn-api-stg.stg.cloudhub.io/open/omni-channel-api/v1.0/'
-	, ACCESS_TOKEN: 'http://alainn-api-stg.stg.cloudhub.io/access-token'
+//	BASE_URL: 'https://alainn-api.cloudhub.io/omni-channel-api/v1.0/'
+		BASE_URL: 'https://alainn-api.cloudhub.io/open/omni-channel-api/v1.0/'
+	, OPEN_URL: 'https://alainn-api.cloudhub.io/open/omni-channel-api/v1.0/'
+	, ACCESS_TOKEN: 'http://alainn-oauth-provider-proxy.cloudhub.io/access-token'
 
 });
 
@@ -45,10 +46,10 @@ app.factory('AuthInterceptor', function ($rootScope, $q, Session) {
 	        // do something on success
 			
 			if ( Session.isActive() ){
-				var user = Session.getUser();
 				var token = Session.getToken();
-				config.headers['x-user-id']=user;
+				var user = Session.getUser();
 				config.headers['access_token']=token;
+				config.headers['x-user-id']=user;
 			}
 			
 			return config || $q.when(config);

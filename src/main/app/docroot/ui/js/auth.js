@@ -32,7 +32,58 @@ services.factory('Session', [  function () {
 services.factory('AuthService', ['$http', '$q', 'Session', 'URLS', function ($http, $q, Session, URLS) {
 	  return {
 		  register: function (registration) {
-			return true;  
+			  var regResult = {
+		    			succesful: true,
+		    			message: ''
+		    	}; 
+			  var headers = {
+	        			'Content-Type': 'application/json'
+		            };
+			  var regRequest = {
+					    "firstName": registration.userdata.firstName,
+					    "lastName": registration.userdata.lastName,
+					    "mobileNumber": registration.userdata.mobileNumber,
+					    "password" : registration.password,
+					  	"notificationPreferences": [  ]
+					};
+			  if ( registration.userdata.notificationPreferences.sms)
+				  regRequest.notificationPreferences.push("sms");
+			  if ( registration.userdata.notificationPreferences.email)
+				  regRequest.notificationPreferences.push("email");
+			  if ( registration.userdata.notificationPreferences.web)
+				  regRequest.notificationPreferences.push("web");
+			  if ( registration.userdata.notificationPreferences.applePush)
+				  regRequest.notificationPreferences.push("mobile-push");
+			  
+			  var deferred = $q.defer();
+			  
+			  $http( { url: URLS.OPEN_URL+'registrations/'+registration.username, method: 'HEAD' } )
+		        .success(function(data, status, headers, config) {
+		        	//user exists
+		        	//throw message
+		        	  regResult.succesful = false;
+		        	  regResult.message = 'User already exists';
+		        	  
+		        	  deferred.resolve(regResult);
+		        	  
+		          }).
+		          error(function(data, status, headers, config) {
+		        	  //user does not exist
+		        	  
+		        	  $http( { url: URLS.OPEN_URL+'registrations/'+registration.username, method: 'POST', data: regRequest, headers: headers } )
+				        .success(function(data, status, headers, config) {
+				        	//Session.create(credentials.username, data.access_token);
+				 			 deferred.resolve(regResult);
+				          }).
+				          error(function(data, status, headers, config) {
+				        	  regResult.succesful = false;
+				        	  regResult.message = 'Error:'+JSON.stringify(data);
+				        	  //regResult.message = 'Invalid credentials';
+				 			 deferred.resolve(regResult);
+				          });
+					  
+		          });
+			  return deferred.promise;
 		  },
 		  
 		  login: function (credentials) {
@@ -51,48 +102,32 @@ services.factory('AuthService', ['$http', '$q', 'Session', 'URLS', function ($ht
 	 		   }
 		 		   
 	        	var headers = {
-        			//Accept: '*/*'
-	               // "Content-Type" : 'application/x-www-form-urlencoded;UTF-8;'
-        			'Content-Type': 'application/x-www-form-urlencoded'
+        			"Accept": '*/*' ,
+	                "Content-Type" : 'application/x-www-form-urlencoded'
+        			//'Content-Type': 'application/x-www-form-urlencoded'
         			//'Content-Type': 'application/json'
 	            };
 
+        		/*
 	        	var token = {
 	    	    	    "expires_in": 86400,
 	    	    	    "token_type": "bearer",
 	    	    	    "refresh_token": "h5hzcBzmLY-RdWhODy_F3z4-QlCO7r3tjGSRI4EASxFjJnmmqnvS8pSNb0ykw06eyU2gfRL7a_lBHU2ihnFLog",
 	    	    	    "access_token": "IC5DINFBYhJkr9dWS-otPfaMFdxE03CPMWTYdUe-xttfxnv5I9ns9jq41mObrbugvpEjDPww6gInuXgG02A1QQ"
 	    	    	}
+	    	    	*/
 	        	
-	        	$http( { url:URLS.ACCESS_TOKEN , method: 'POST', params: auth, headers: headers } )
+	        	$http( { url: URLS.ACCESS_TOKEN, method: 'POST', data: $.param(auth), headers: headers } )
 		        .success(function(data, status, headers, config) {
-		    Session.create(credentials.username, token.access_token);
+		        	Session.create(credentials.username, data.access_token);
 		 			 deferred.resolve(authResult);
 		          }).
 		          error(function(data, status, headers, config) {
-		    Session.create(credentials.username, token.access_token);  
-		    authResult.succesful = true;
-		        	authResult.message = 'Invalid credentials :'+JSON.stringify(config);
+		        	  authResult.succesful = false;
+		        	  //authResult.message = 'Error:'+data.error_message;
+		        	 authResult.message = 'Invalid credentials';
 		 			 deferred.resolve(authResult);
 		          });
-	        	/*
-		        $http( {
-		        	url: URLS.ACCESS_TOKEN, 
-		        	data: $.param(auth),
-		        	method: "GET" ,
-		        	headers: headers
-		        }).
-		        success(function(data, status, headers, config) {
-		    Session.create(credentials.username, token.access_token);
-		 			 deferred.resolve(authResult);
-		          }).
-		          error(function(data, status, headers, config) {
-		    Session.create(credentials.username, token.access_token);  
-		    authResult.succesful = true;
-		        	authResult.message = 'Invalid credentials :'+JSON.stringify(config);
-		 			 deferred.resolve(authResult);
-		          });*/
-		   
 		   return deferred.promise;
 	    },
 	    logout: function(){

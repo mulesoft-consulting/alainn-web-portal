@@ -35,9 +35,8 @@ var ModalLoginController = function ($scope, $rootScope, $modal, $modalInstance,
 				$modalInstance.close($scope.credentials);
 			    $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
 			}else{
-				this.clearAlerts();
 				$scope.alerts.push({type: 'danger', msg: authResults.message });
-				$interval($scope.clearAlerts, 2200, 0);
+				//$interval($scope.clearAlerts, 2200, 0);
 				$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
 			}
 				
@@ -55,9 +54,10 @@ var ModalLoginController = function ($scope, $rootScope, $modal, $modalInstance,
 	      size: size
 	    });
 
-	    modalInstance.result.then(function (registration) {
+	    modalInstance.result.then(function (registration, result) {
 	    	$scope.credentials.username = registration.username;
 	    	$scope.credentials.password = registration.password;
+	    	$scope.ok();
 	    }, function () {
 	    	//$log.info('Modal dismissed at: ' + new Date());
 	    });
@@ -69,13 +69,13 @@ var ModalLoginController = function ($scope, $rootScope, $modal, $modalInstance,
 var ModalRegistrationController = function ($scope, $rootScope, $modalInstance, $interval, AuthService, AUTH_EVENTS) {
 
 	$scope.registration = { 
-		username: '', 
-		password: '', 
+		username: 'mjuan@mulesoft.com', 
+		password: 'xxxxx', 
 		password2: '',
 		userdata: {
-	        "firstName" : "",
-	        "lastName" : "",
-	        "mobileNumber" : "",
+	        "firstName" : "matias",
+	        "lastName" : "juan",
+	        "mobileNumber" : "+1 55 5555",
 	        "notificationPreferences": {
 	           sms: false,
 	           email: true,
@@ -105,18 +105,22 @@ var ModalRegistrationController = function ($scope, $rootScope, $modalInstance, 
 	  };
 	               
 	$scope.ok = function () {
-		$scope.alerts.push({msg: 'Registering..'});
 		
-		if ( AuthService.register($scope.registration) ){
-			$scope.alerts.push({type: 'success', msg: 'Welcome!'});
-			$modalInstance.close($scope.registration);
-		    $rootScope.$broadcast(AUTH_EVENTS.registrationSuccess);
-		} else{
-			this.clearAlerts();
-			$scope.alerts.push({type: 'danger', msg: 'Invalid credentials'});
-			$interval($scope.clearAlerts, 2200, 0);
-			$rootScope.$broadcast(AUTH_EVENTS.registrationFailed);
-		};
+		this.clearAlerts();
+		$scope.alerts.push({msg: 'Registering..'});
+		AuthService.register($scope.registration).then(function(regResults){
+			$scope.clearAlerts();
+			if ( regResults.succesful ){
+				$scope.alerts.push({type: 'success', msg: 'Welcome' });
+				$modalInstance.close($scope.registration);
+			    $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+			}else{
+				$scope.alerts.push({type: 'danger', msg: regResults.message });
+				//$interval($scope.clearAlerts, 2200, 0);
+				$rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+			}
+				
+		});
 	};
 
 	$scope.cancel = function () {

@@ -60,10 +60,10 @@ services.service('basketService', [ '$http', '$q', 'URLS', 'BasketItem', 'Sessio
           var deferred = $q.defer();
           var scope = this;
           this._items = {};
-          deferred.resolve(scope._items);
+          //deferred.resolve(scope._items);
           
-          $http.get(URLS.BASE_URL + 'basket/')
-              .success(function(data, status, headers, config) {
+          $http( { url: URLS.BASE_URL + 'basket', method: 'GET' , cache: false} )
+              .success(function(data, status, headers, config, statusText) {
                    var items = []; 
                   data.collection.items.forEach(function(itemData) {
                       var item = scope._retrieveInstance(itemData.sku, itemData);
@@ -71,7 +71,7 @@ services.service('basketService', [ '$http', '$q', 'URLS', 'BasketItem', 'Sessio
                   });
                   deferred.resolve(items);
               })
-              .error(function(data, status, headers, config) {
+              .error(function(data, status, headers, config, statusText) {
                   deferred.reject();
               });
               
@@ -88,22 +88,19 @@ services.service('basketService', [ '$http', '$q', 'URLS', 'BasketItem', 'Sessio
           'price': price
         };
         
-        var headers = {
-        		'Content-Type': 'application/json',
-        		Accept: 'application/json'
-        			
+         var headers = {
+        		//'Content-Type': 'application/json'
         		//,'Cache-Control': 'no-cache'
         		//,'Accept': '*/*'
-        		//,'x-user-id': Session.getUser() 
-        		//,'access_token':  Session.getToken()
+        		
         }
 
-        $http( { url:URLS.BASE_URL + 'basket/', method: 'POST', data: basketItem, headers: headers, cache:false})
+        $http( { url:URLS.BASE_URL + 'basket/', method: 'POST', data:basketItem})
         	.success(function(data, status, headers, config) {
                 deferred.resolve();
             })
             .error(function(data, status, headers, config) {
-                alert("error adding item to basket: "+status);
+                alert("error adding item to basket: "+JSON.stringify(config));
                 deferred.reject();
             });
         return deferred.promise;
