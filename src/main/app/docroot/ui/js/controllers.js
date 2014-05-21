@@ -104,8 +104,9 @@ controllers.controller('HomeController', ['$scope',
     
   }]);
 
-controllers.controller('CatalogListCtrl', ['$scope', '$location', '$stateParams', 'itemsManager', 'navigation', 'brandsManager', 
-  function($scope, $location, $stateParams, itemsManager, navigation, brandsManager) {
+controllers.controller('CatalogListCtrl', 
+		['$scope', '$rootScope', '$location', '$stateParams', 'itemsManager', 'navigation', 'brandsManager', 'wishlistService', 'AUTH_EVENTS', 'Session', 'basketService' ,
+  function($scope, $rootScope, $location, $stateParams, itemsManager, navigation, brandsManager, wishlistService, AUTH_EVENTS, Session, basketService) {
 	
 	$scope.nav = navigation;
 
@@ -125,7 +126,6 @@ controllers.controller('CatalogListCtrl', ['$scope', '$location', '$stateParams'
     	$scope.pageIndex = navigation.pageIndex();
     	
     	$scope.pageIndexRange = parseInt($scope.pageIndex)+parseInt($scope.pageSize);
-    	
 	});
 	
 	if ( navigation._last!='' ){
@@ -151,28 +151,24 @@ controllers.controller('CatalogListCtrl', ['$scope', '$location', '$stateParams'
     };
     
     
+    //Details
     
-  }]);
-
-controllers.controller('CatalogDetailCtrl', ['$scope', '$rootScope', '$location', '$stateParams', 
-                                             'itemsManager', 'basketService', 'wishlistService', 'Session', 'AUTH_EVENTS',
-  function($scope, $rootScope, $location, $stateParams, itemsManager, basketService, wishlistService, Session, AUTH_EVENTS ) {
-	
-	$scope.canAddToWishlist = false;
+    $scope.canAddToWishlist = false;
 	$scope.canAddToBasket = false;
+	
+	wishlistService.loadAllItems();
 	
 	$scope.$on('skuLoaded', function(){
         $scope.qty = 1;
         $scope.maxQty = $scope.sku.stockQuantity;
         $scope.basketIconUrl = "img/cart-add.png";
         $scope.setImage($scope.sku.firstImage());
-        //$scope.addToBasketDisabled = (basketService.findSku($scope.sku.sku)===undefined);
-        $scope.canAddToWishlist = (wishlistService.findSku($scope.sku.sku)==null) && Session.isActive();
+    	$scope.canAddToWishlist = !($scope.sku===undefined) && Session.isActive() && (wishlistService.findSku($scope.sku.sku)==null) ;
         $scope.canAddToBasket = Session.isActive();
 	});
 	
 	$scope.$on(AUTH_EVENTS.loginSuccess, function(){
-		$scope.canAddToWishlist = (wishlistService.findSku($scope.sku.sku)==null) && Session.isActive();
+    	$scope.canAddToWishlist = !($scope.sku===undefined) && Session.isActive() && (wishlistService.findSku($scope.sku.sku)==null) ;
         $scope.canAddToBasket = Session.isActive();
 	});
 	
@@ -181,60 +177,65 @@ controllers.controller('CatalogDetailCtrl', ['$scope', '$rootScope', '$location'
 		$scope.canAddToBasket = false;
 	});
 	
-	wishlistService.loadAllItems();
+	$scope.$on('basketLoaded', function() {
+    });
+	    
+    $scope.$on('wishlistLoaded', function(){
+    	$scope.canAddToWishlist = !($scope.sku===undefined) && Session.isActive() && (wishlistService.findSku($scope.sku.sku)==null) ;
+    });
 	
-    itemsManager.getItem($stateParams.itemId).then(function(item) {
-          $scope.item = item;
-          $scope.mainImageUrl = item.getMainImageUrl();
-          $scope.itemImages = item.getImagesUrl("SmallImage");
+    $scope.selectItem = function(selectedItem){
+    	var scope = $scope;
+    	itemsManager.getItem(selectedItem.id).then(function(item) {
+            scope.item = item;
+            scope.mainImageUrl = item.getMainImageUrl();
+            scope.itemImages = item.getImagesUrl("SmallImage");
 
-          var sku  = item.getFirstSku();
-          $scope.setCurrentSku(sku);
-      });
-  
-
-    $scope.setImage = function(image) {
-      $scope.mainImageUrl = image.href;
-    };
-
-    $scope.setCurrentSku = function (sku){
-      $scope.sku = sku;
-      $scope.$broadcast('skuLoaded');
+            var sku  = item.getFirstSku();
+            scope.setCurrentSku(sku);
+        });
+    	
+    	
     }
-
-
-    $scope.addToBasket = function(){
-    	var btn = $('#addToBasketButton');
-    	btn.button('loading');
-    	$('#menuBasket').popover('show');
-    	basketService.addItem( $scope.sku.sku, $scope.sku.price, $scope.qty ).then(function(data) {
-    		btn.button('reset');
-    		basketService.loadAllItems().then(function(){
-    			//$rootScope.$broadcast('basketLoaded');
-    		});
-      });
-    };
     
-    $scope.addToWishlist= function() {
-    	var btn = $('#addToWishlistButton');
-    	btn.button('loading');
+    $scope.setImage = function(image) {
+        $scope.mainImageUrl = image.href;
+      };
 
-  	  $('#menuWishlist').popover('show');
-    	wishlistService.addItem( $scope.sku.sku ).then(function(data) {
-      	  btn.button('reset');
-    		wishlistService.loadAllItems().then(function(){
-    			$scope.$broadcast('wishlistLoaded');
-    			$('#menuWishlist').popover('hide');
-    		});
-    		
-          });
-    };
+      $scope.setCurrentSku = function (sku){
+        $scope.sku = sku;
+        $rootScope.$broadcast('skuLoaded');
+      }
 
+
+      $scope.addToBasket = function(){
+      	var btn = $('#addToBasketButton');
+      	btn.button('loading');
+      	$('#menuBasket').popover('show');
+      	basketService.addItem( $scope.sku.sku, $scope.sku.price, $scope.qty ).then(function(data) {
+  			btn.button('reset');
+      		basketService.loadAllItems().then(function(){
+      			//$rootScope.$broadcast('basketLoaded');
+      		});
+        });
+      };
+      
+      $scope.addToWishlist= function() {
+      	var btn = $('#addToWishlistButton');
+      	btn.button('loading');
+
+    	  $('#menuWishlist').popover('show');
+      	wishlistService.addItem( $scope.sku.sku ).then(function(data) {
+        	  btn.button('reset');
+      		wishlistService.loadAllItems().then(function(){
+      			$rootScope.$broadcast('wishlistLoaded');
+      			$('#menuWishlist').popover('hide');
+      		});
+      		
+            });
+      };
     
-
-
   }]);
-
 
 controllers.controller('BasketCtrl', ['$scope', '$rootScope', 'basketService',  '$modal', 
   function($scope, $rootScope, basketService,  $modal) {
@@ -358,6 +359,7 @@ controllers.controller('WishlistCtrl', ['$scope', '$rootScope', 'wishlistService
 	});
 	
 	$scope.removeFromWishlist = function(sku){
+		$('#menuWishlist').popover('show');
 		wishlistService.removeItem(sku.sku).then(function(){
 			wishlistService.loadAllItems().then(function(){
 				$rootScope.$broadcast('wishlistLoaded');

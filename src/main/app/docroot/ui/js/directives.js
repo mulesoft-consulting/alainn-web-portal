@@ -24,6 +24,20 @@ app.directive('formAutofillFix', function ($timeout) {
 });
 
 
+app.directive('itemSelected', function($animate) {
+    return  function(scope, element, attrs) {
+//    	if ( attrs.navDisabled=='true' ){
+//	          element.addClass('disabled');
+//	  	}else{
+//	  		element.removeClass('disabled');
+//	  	}
+	    scope.$watch([attrs.itemSelected, attrs.currentItem], function ngShowWatchAction(values){
+		      $animate[toBoolean(value) ? 'addClass' : 'removeClass'](element, 'active');
+	    });
+
+    }
+});
+
 app.directive('navDisabled', function($animate) {
     return  function(scope, element, attrs) {
 //    	if ( attrs.navDisabled=='true' ){

@@ -87,8 +87,8 @@ img.item {
   margin-bottom: 2em;
   background-color: white;
   padding: 2em;
-  height: 400px;
-  width: 400px;
+  /*height: 400px;*/
+  width: 300px;
   display: none;
 }
 
@@ -100,7 +100,7 @@ img.item:first-child {
 ul.item-thumbs {
   margin: 0;
   list-style: none;
-  width: 55%;
+  width: 100%;
   display: block;
   white-space: nowrap;
   overflow: auto;

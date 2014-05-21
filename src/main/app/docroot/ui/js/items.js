@@ -131,7 +131,7 @@ services.service('itemsManager', ['$http', '$q', 'Item', 'URLS', function($http,
         _load: function(itemId, deferred) {
             var scope = this;
 
-            var params = { imageType: 'LargeImage' };
+            var params = { imageType: 'LargeImage, MediumImage' };
 
             $http( {
                 url: URLS.OPEN_URL + 'items/' + itemId, 

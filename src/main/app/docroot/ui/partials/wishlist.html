@@ -1,17 +1,46 @@
-this is the wishlist
+<div class="row" ng-hide="isEmpty">
+	<div class="col-md-12">
 
-<div class="span10" ng-hide="isEmpty" >
-    <ul class="items">
-      <li ng-repeat="sku in wishlist"
-          class="thumbnail item-listing">
-        <a class="thumb"><img ng-src="{{sku.firstImage().href | https}}"></a>
-        <a >{{sku.name}}</a> 
-        	&nbsp; <button ng-click="removeFromWishlist(sku)">delete</button></p>
-        <p>{{sku.summary}}</p>
+<!--  Content  -->
 
-      </li>
-    </ul>
-  </div>
-  <div class="span10" ng-show="isEmpty" >
-  	it's empty!! add some items ..
-  </div>
+		<ul class="list-group">
+		    <li class="list-group-item" ng-repeat="sku in wishlist">
+
+				<div class="row">
+					<div class="col-md-1">
+						<img class="img-rounded" width="80px" ng-src="{{sku.firstImage().href | https}}" >
+					</div>
+					<div class="col-md-11">
+		
+						<div class="row">
+							<div class="col-md-5">
+								<h5 class="list-group-item-heading">{{sku.name}}</h5> 
+								<p class="list-group-item-text">Summary: {{sku.summary}}</p>
+							</div>
+							<div class="col-md-5">
+								<button ng-click="removeFromWishlist(sku)"
+								
+									data-loading-text="Removing form wishlist..."  
+									        	ng-click="removeFromWishlist(sku)" 
+									        	class="btn btn-primary" type="button" 
+								
+								>delete</button>
+								</div>
+									<div class="col-md-2">
+							</div>
+						</div>
+		
+					</div>
+				</div>
+
+
+		    </li>
+		</ul>
+
+	</div>
+</div>
+<div class="row" ng-show="isEmpty">
+	<div class="col-md-12">
+		it's empty!! add some items ..
+	</div>
+</div>

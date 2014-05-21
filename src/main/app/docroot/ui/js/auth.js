@@ -53,7 +53,7 @@ services.factory('AuthService', ['$http', '$q', 'Session', 'URLS', function ($ht
 			  if ( registration.userdata.notificationPreferences.web)
 				  regRequest.notificationPreferences.push("web");
 			  if ( registration.userdata.notificationPreferences.applePush)
-				  regRequest.notificationPreferences.push("mobile-push");
+				  regRequest.notificationPreferences.push("apple-push");
 			  
 			  var deferred = $q.defer();
 			  

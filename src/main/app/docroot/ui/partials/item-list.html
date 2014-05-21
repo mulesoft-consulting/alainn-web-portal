@@ -1,45 +1,95 @@
-<!-- <div ng-include src="'partials/browse.include.html'"></div> -->
-      <!-- 
-      <div ng-repeat="item in items">
-        <div class="panel panel-default">
-	  <div class="panel-body">
-	    <a href="#/items/{{item.id}}" 
-            	><img ng-src="{{item.getThumbUrl() | https}}"></a>
-		          <a href="#/items/{{item.id}}">{{item.name}}</a>
-		          <p>({{item.brand}})  {{item.summary}}</p>
-	  </div>
+
+
+<div class="row">
+	<div class="col-md-4">
+
+<!--  Content  -->
+		<div class="list-group" ng-repeat="item in items">
+			<a href="#" ng-click="selectItem(item)" class="list-group-item" >
+				<h4 class="list-group-item-heading">{{item.name}}</h4> <img
+				ng-src="{{item.getThumbUrl() | https}}">
+				<p class="list-group-item-text">Brand: {{item.brand}}</p>
+				<p class="list-group-item-text">Summary: {{item.summary}}</p>
+			</a>
+		</div>
+		<!-- 
+		<div class="list-group" ng-repeat="item in items">
+			<a href="#/items/{{item.id}}" class="list-group-item">
+				<h4 class="list-group-item-heading">{{item.name}}</h4> <img
+				ng-src="{{item.getThumbUrl() | https}}">
+				<p class="list-group-item-text">Brand: {{item.brand}}</p>
+				<p class="list-group-item-text">Summary: {{item.summary}}</p>
+			</a>
+		</div>
+		 -->
+<!--  /Content  -->
+
+	</div>
+	<div class="col-md-8">
+		<div style="position: fixed" class="panel panel-default" ng-show="sku!=null">
+			<div class="panel-body">
+<!--  Content  -->
+
+				<div class="row">
+					<div class="col-md-4">
+			            <img  class="img-rounded item" ng-src="{{mainImageUrl | https}}" >
+					</div>
+					<div class="col-md-8">
+					
+					    <h1>{{item.name}}</h1>
+					
+					    <p>{{item.description}}</p>
+					
+					    <h3>Details</h3>
+					    <ul >
+					      <li>
+					        <dl>
+					          <dt>Sku</dt><dd>{{sku.sku}}</dd>
+					          <dt>Name</dt><dd>{{sku.name}}</dd>
+					          <dt>Description</dt><dd>{{sku.summary}}</dd>
+					          <dt>Price</dt><dd><span class="price">{{sku.price}}</span></dd>
+					          <dt>Available units</dt><dd>{{sku.stockQuantity}}</dd>
+					        </dl>
+					        <dl>
+					          <div ng-repeat="c in sku.data">
+					            <dt>{{c.name}}</dt><dd>{{c.value}}</dd>
+					          </div>
+					        </dl>
+					        Qty: <a href="#" editable-number="qty" e-min="1" e-max="{{maxQty}}"  >{{qty}}</a>
+					        
+					        <button id="addToBasketButton" data-loading-text="Adding to basket..." 
+					        	 ng-click="addToBasket()" class="btn btn-primary" type="button" ng-disabled="!canAddToBasket" >add to basket</button>&nbsp;
+					
+					        <button
+					        	id="addToWishlistButton" data-loading-text="Adding to wishlist..."  
+					        	ng-click="addToWishlist()" ng-disabled="!canAddToWishlist"
+					        	class="btn btn-primary" type="button"  >add to wishlist</button>
+					
+					      </li>
+					    </ul>
+					
+					
+					    
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<ul class="item-thumbs" >
+					        <li ng-repeat="sku in item.getSkus()">
+					            <img ng-src="{{sku.firstImage().href | https}}" ng-click="setCurrentSku(sku)">
+					        </li>
+					    </ul>
+					</div>
+				</div>
+
+			
+			
+<!--  /Content  -->
+			</div>
+		</div>
 	</div>
 </div>
- -->
- <!-- 
- <form novalidate >
-		   Brand: <input type="text" ng-model="brand" typeahead="value for value in brands | filter:$viewValue | limitTo:8" class="form-control">
-	    	Text:	<input ng-model="query">
-	      	<img ng-src="img/search.png" ng-click="submit()"/>
-	  </form>
- -->
 
-<div class="list-group" ng-repeat="item in items">
-    <a href="#/items/{{item.id}}" class="list-group-item">
-        <h4 class="list-group-item-heading">{{item.name}}</h4>
-        <img ng-src="{{item.getThumbUrl() | https}}">
-        <p class="list-group-item-text">Brand: {{item.brand}} </p>
-        <p class="list-group-item-text">Summary: {{item.summary}}</p>
-    </a>
-</div>
 
-<!-- 
-      <div class="row">
-      	<div class="col">
-          <ul class="list-group" ng-repeat="item in items">
-            <li class="list-group-item">
-            	<a href="#/items/{{item.id}}" 
-            	><img ng-src="{{item.getThumbUrl() | https}}"></a>
-		          <a href="#/items/{{item.id}}">{{item.name}}</a>
-		          <p>({{item.brand}}) {{item.summary}}</p>
-			</li>
-          </ul>
-        </div>
-      </div>
-      --> 
+
 <div ng-include src="'partials/browse.include.html'"></div>
