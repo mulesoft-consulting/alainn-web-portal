@@ -280,7 +280,7 @@ controllers.controller('BasketCtrl', ['$scope', '$rootScope', 'basketService',  
 
 		    modalInstance.result.then(function (checkoutData) {
 		    	$("#checkoutButton").button('reset');
-	    	  basketService.checkout().then( function() {
+	    	  basketService.checkout(checkoutData).then( function() {
 	    		  basketService.loadAllItems().then(function(){
 	    			  //$("#checkoutButton").button('reset');
 	    		  });
@@ -320,7 +320,7 @@ controllers.controller('BasketCtrl', ['$scope', '$rootScope', 'basketService',  
 
 var ModalCheckoutController = function ($scope, $rootScope, $modal, $modalInstance, $interval, AuthService, AUTH_EVENTS) {
 
-	$scope.checkout = { pickuplocation: 'Mongomery Mall' };
+	$scope.checkout = { pickuplocation: '' };
 	$scope.message = "";
 	
 	$scope.onChange = function(){

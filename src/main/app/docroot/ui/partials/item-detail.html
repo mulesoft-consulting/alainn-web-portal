@@ -3,11 +3,13 @@
         <div class="item-images">
             <img ng-src="{{mainImageUrl | https}}" class="item">
         </div>
+        <!-- 
         <ul class="item-thumbs">
             <li ng-repeat="img in sku.images()">
                 <img ng-src="{{img.href}}" ng-click="setImage(img)">
             </li>
         </ul>
+         -->
     </div>
 
     <h1>{{item.name}}</h1>
@@ -22,6 +24,7 @@
         <dl>
           <dt>Sku</dt><dd>{{sku.sku}}</dd>
           <dt>Name</dt><dd>{{sku.name}}</dd>
+          <dt>Description</dt><dd>{{sku.summary}}</dd>
           <dt>Price</dt><dd><span class="price">{{sku.price}}</span></dd>
           <dt>Available units</dt><dd>{{sku.stockQuantity}}</dd>
         </dl>
@@ -50,6 +53,3 @@
         </li>
     </ul>
 </div>
-<dl>
-    <dt>Description</dt><dd>{{sku.summary}}</dd>
-</dl>

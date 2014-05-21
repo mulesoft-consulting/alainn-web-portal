@@ -134,16 +134,17 @@ services.service('basketService', [ '$http', '$q', 'URLS', 'BasketItem', 'Sessio
             });
         return deferred.promise;
       },
-      checkout: function(){
+      checkout: function(checkoutData){
         var deferred = $q.defer();
         var scope = this;
 
         var checkoutBasket = {
-          "pickupLocation": "Buenos Aires",
+          "pickupLocation": checkoutData.pickuplocation,
           "items": []
         };
 
-        for(var bi in scope._items){
+        for (var key in scope._items){
+        	var bi = scope._items[key];
             var item = {
               "sku": bi.sku,
               "quantity": bi.quantity,

@@ -1,7 +1,7 @@
 
 var ModalLoginController = function ($scope, $rootScope, $modal, $modalInstance, $interval, AuthService, AUTH_EVENTS) {
 
-	$scope.credentials = { username: 'mjuan@mulesoft.com', password: 'xxx' };
+	$scope.credentials = { username: '', password: '' };
 	$scope.message = "";
 	
 	$scope.onChange = function(){
@@ -69,13 +69,13 @@ var ModalLoginController = function ($scope, $rootScope, $modal, $modalInstance,
 var ModalRegistrationController = function ($scope, $rootScope, $modalInstance, $interval, AuthService, AUTH_EVENTS) {
 
 	$scope.registration = { 
-		username: 'mjuan@mulesoft.com', 
-		password: 'xxxxx', 
+		username: '', 
+		password: '', 
 		password2: '',
 		userdata: {
-	        "firstName" : "matias",
-	        "lastName" : "juan",
-	        "mobileNumber" : "+1 55 5555",
+	        "firstName" : "",
+	        "lastName" : "",
+	        "mobileNumber" : "",
 	        "notificationPreferences": {
 	           sms: false,
 	           email: true,
