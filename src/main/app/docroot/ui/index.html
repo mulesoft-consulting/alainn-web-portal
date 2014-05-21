@@ -117,21 +117,7 @@
           </ul>
         </div>
         <!--/.nav-collapse -->
-        	
-      <!-- 
-	        <form ng-submit="doSearch()" ng-model="searching" ng-show="current.indexOf('/items')==0">
-	          <div class="class="btn-group"">
-	              <input type="text" class="form-control"  placeholder="Brand" ng-model="searchQuery" />
-	              <input type="text" class="form-control" placeholder="Enter search query" ng-model="searchQuery" />
-	              <span ng-show="searching" class="input-group-addon">
-	              	<i class="glyphicon glyphicon-time"></i>
-	        	  	</span>
-	              <span class="input-group-btn">
-	                  <button type="submit" class="btn"><i class="glyphicon glyphicon-search">&nbsp;</i>{{getSearchButtonText()}}</button>
-	              </span>
-	          </div>
-	     	</form>
-	     	  -->
+        
       </div>
     </div>
 
@@ -140,12 +126,6 @@
     <div ui-view></div>
   </div>
 
-  <hr>
-  <!-- 
-  <div ng-controller="BasketListOnFooterController">
-    <div ng-include src="'partials/basket-list-small.html'"></div>
-  </div>
- -->  
   <div ng-include="'partials/login.modal.html'"/>
   <div ng-include="'partials/registration.modal.html'"/>
   <div ng-include="'partials/checkout.modal.html'"/>

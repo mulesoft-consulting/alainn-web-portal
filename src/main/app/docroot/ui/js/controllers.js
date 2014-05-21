@@ -235,26 +235,6 @@ controllers.controller('CatalogDetailCtrl', ['$scope', '$rootScope', '$location'
 
   }]);
 
-controllers.controller('BasketListOnFooterController', ['$scope', '$rootScope', 'basketService', 
-  function($scope, $rootScope, basketService){
-	
-	$scope.checkoutDisabled = (basketService.itemCount()==0);
-    
-    $scope.$on('basketLoaded', function() {
-      $scope.basketItems = basketService._items;
-      $scope.checkoutDisabled = (basketService.itemCount()==0);
-    });
-
-    $scope.removeFromBasket= function(basketItem) {
-      basketService.removeItem(basketItem).then( function(data) {
-          basketService.loadAllItems().then(function(){
-            //$rootScope.$broadcast('basketLoaded');
-          });
-      });
-    };
-    
-}])
-
 
 controllers.controller('BasketCtrl', ['$scope', '$rootScope', 'basketService',  '$modal', 
   function($scope, $rootScope, basketService,  $modal) {
