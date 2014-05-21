@@ -1,4 +1,5 @@
+Showing items: {{pageIndex}} - {{pageIndexRange}}
 <ul class="pager">
-  <li><a ng-disabled="!hasPrevPage" ng-click="browse('prev')">Previous</a></li>
-  <li><a ng-disabled="!hasNextPage" ng-click="browse('next')">Next</a></li>
-</ul>&nbsp;Showing items: {{pageIndex}} - {{pageIndexRange}}
+  <li><a class="previous" ng-show="hasPrevPage" href="#" ng-click="browse('prev')">&larr; Previous</a></li>
+  <li><a class="next" ng-show="hasNextPage" href="#" ng-click="browse('next')">Next &rarr;</a></li>
+</ul>

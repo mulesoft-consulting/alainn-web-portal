@@ -1,60 +1,55 @@
-<div class="item-images">
-  <img ng-src="{{mainImageUrl | https}}"
-       class="item"
-       >
+<div class="top-sku-info">
+    <div class="info-left">
+        <div class="item-images">
+            <img ng-src="{{mainImageUrl | https}}" class="item">
+        </div>
+        <ul class="item-thumbs">
+            <li ng-repeat="img in sku.images()">
+                <img ng-src="{{img.href}}" ng-click="setImage(img)">
+            </li>
+        </ul>
+    </div>
+
+    <h1>{{item.name}}</h1>
+
+    <p>{{item.description}}</p>
+
+    <hr>
+
+    <h3>Details</h3>
+    <ul class="details">
+      <li>
+        <dl>
+          <dt>Sku</dt><dd>{{sku.sku}}</dd>
+          <dt>Name</dt><dd>{{sku.name}}</dd>
+          <dt>Price</dt><dd><span class="price">{{sku.price}}</span></dd>
+          <dt>Available units</dt><dd>{{sku.stockQuantity}}</dd>
+        </dl>
+        <dl>
+          <div ng-repeat="c in sku.data">
+            <dt>{{c.name}}</dt><dd>{{c.value}}</dd>
+          </div>
+        </dl>
+        Qty: <a href="#" editable-number="qty" e-min="1" e-max="{{maxQty}}"  >{{qty}}</a>
+        
+        <button id="addToBasketButton" data-loading-text="Adding to basket..." 
+        	 ng-click="addToBasket()" class="btn btn-primary" type="button" ng-disabled="!canAddToBasket" >add to basket</button>&nbsp;
+
+        <button
+        	id="addToWishlistButton" data-loading-text="Adding to wishlist..."  
+        	ng-click="addToWishlist()" ng-disabled="!canAddToWishlist"
+        	class="btn btn-primary" type="button"  >add to wishlist</button>
+
+      </li>
+    </ul>
+
+
+    <ul class="item-thumbs" >
+        <li ng-repeat="sku in item.getSkus()">
+            <img ng-src="{{sku.firstImage().href | https}}" ng-click="setCurrentSku(sku)">
+        </li>
+    </ul>
 </div>
-
-<h1>{{item.name}}</h1>
-
-<p>{{item.description}}</p>
-
-
-item images < <ul class="item-thumbs">
-  <li ng-repeat="img in itemImages">
-    <img ng-src="{{img.href | https}}" ng-click="setImage(img)">
-  </li>
-</ul> > <HR>
-
-1 sku image to select sku < 
-<ul class="item-thumbs" >
-  <li ng-repeat="sku in item.getSkus()">
-    <img ng-src="{{sku.firstImage().href | https}}" ng-click="setCurrentSku(sku)">
-  </li>
-</ul> 
->
-
-
-<hr>
-current sku {{sku.sku}} -> <BR>
-<ul class="item-thumbs">
-  <li>
 <dl>
-      <dt>sku</dt><dd>{{sku.sku}}</dd>
-      <dt>name</dt><dd>{{sku.name}}</dd>
-      <dt>desc</dt><dd>{{sku.summary}}</dd>
-      <dt>price</dt><dd>{{sku.price}}</dd>
-      <dt>available units</dt><dd>{{sku.stockQuantity}}</dd>
-    </dl>
-    Caracteristicas:
-    <dl>
-      <div ng-repeat="c in sku.data">
-        <dt>{{c.name}}</dt><dd>{{c.value}}</dd>
-      </div>
-    </dl>
-    <ul class="item-thumbs">
-    <li ng-repeat="img in sku.images()">
-      <img ng-src="{{img.href}}" ng-click="setImage(img)">
-    </li>
-  </ul>
-    Qty: <a href="#" editable-number="qty" e-min="1" e-max="{{maxQty}}"  >{{qty}}</a>
-    
-    <button ng-click="addToBasket()" ng-show="user.sessionIsActive">add to basket</button>&nbsp;
-    
-    <button ng-click="addToWishlist()" ng-disabled="skuInWishlist" ng-show="user.sessionIsActive">add to wishlist</button>
-    
-</li>
-</ul>
-
-
-
-
+    <dt>Description</dt><dd>{{sku.summary}}</dd>
+</dl>

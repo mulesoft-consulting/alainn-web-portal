@@ -1,17 +1,40 @@
-	<div class="page-header">
-        <h1>Catalog</h1>
-      </div>
-      <div ng-include src="'partials/browse.include.html'"></div>
+<!-- <div ng-include src="'partials/browse.include.html'"></div> -->
+      <!-- 
+      <div ng-repeat="item in items">
+        <div class="panel panel-default">
+	  <div class="panel-body">
+	    <a href="#/items/{{item.id}}" 
+            	><img ng-src="{{item.getThumbUrl() | https}}"></a>
+		          <a href="#/items/{{item.id}}">{{item.name}}</a>
+		          <p>({{item.brand}})  {{item.summary}}</p>
+	  </div>
+	</div>
+</div>
+ -->
+ 
+
+
+<div class="list-group" ng-repeat="item in items">
+    <a href="#/items/{{item.id}}" class="list-group-item">
+        <h4 class="list-group-item-heading">{{item.name}}</h4>
+        <img ng-src="{{item.getThumbUrl() | https}}">
+        <p class="list-group-item-text">Brand: {{item.brand}} </p>
+        <p class="list-group-item-text">Summary: {{item.summary}}</p>
+    </a>
+</div>
+
+<!-- 
       <div class="row">
-      	<div class="col-sm-4">
+      	<div class="col">
           <ul class="list-group" ng-repeat="item in items">
             <li class="list-group-item">
-            	<a href="#/items/{{item.id}}" class="thumb"><img ng-src="{{item.getThumbUrl() | https}}"></a>
+            	<a href="#/items/{{item.id}}" 
+            	><img ng-src="{{item.getThumbUrl() | https}}"></a>
 		          <a href="#/items/{{item.id}}">{{item.name}}</a>
 		          <p>({{item.brand}}) {{item.summary}}</p>
 			</li>
           </ul>
-        </div><!-- /.col-sm-4 -->
+        </div>
       </div>
-      
+      --> 
 <div ng-include src="'partials/browse.include.html'"></div>

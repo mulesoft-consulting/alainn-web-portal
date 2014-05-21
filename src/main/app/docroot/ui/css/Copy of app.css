@@ -1,23 +1,9 @@
 /* app css stylesheet */
-/*
+
 body {
   padding-top: 20px;
 }
-*/
-span.price {
-  color: #900;
-  font-weight: bold;
-  font-size: 16px;
-}
 
-.info-left {
-  float: left;
-  width: 40%;
-}
-
-.info-right{
-    float: right;
-}
 
 .item-images {
   background-color: white;
@@ -28,39 +14,13 @@ span.price {
   float: left;
 }
 
-.nav-right {
-    float: right;
-    right: 40px;
-    margin: 10px 20px 10px 20px;
-}
-
-#basket-drop-down {
-    display: none;
-    width: 600px;
-    position: absolute;
-    right: 0;
-    top: 80px;
-    z-index: 20;
-    background-color: #ffffff;
-    padding: 1em;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
 .items {
   list-style: none;
 }
 
-#brand-filter {
-    margin-left: 20px;
-}
-
-#brand-filter select {
-  height: 25px;
-  -webkit-appearance: menulist-button;
-}
 .thumb {
   float: left;
+  margin: -1em 1em 1.5em 0em;
   padding-bottom: 1em;
   height: 100px;
   width: 100px;
@@ -100,11 +60,6 @@ img.item:first-child {
 ul.item-thumbs {
   margin: 0;
   list-style: none;
-  width: 55%;
-  display: block;
-  white-space: nowrap;
-  overflow: auto;
-  padding: 0px;
 }
 
 ul.item-thumbs li {

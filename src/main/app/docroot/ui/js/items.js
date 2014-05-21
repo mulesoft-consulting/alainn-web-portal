@@ -81,40 +81,31 @@ services.factory('Item', ['$http', '$q', 'Sku', function($http, $q, Sku) {
 
 services.service('brandsManager', [ '$http', '$q', 'URLS', function($http, $q, URLS) {
 	var brandsManager = {
-		_pool: [],
         findAll: function() {
             var deferred = $q.defer();
             var scope = this;
-	            if (_.size(this._pool)>0)
-	            	{
-	            	deferred.resolve(this._pool);
-	            	}
-	            else
-	            	{
 	            	
-	            var params = { pageSize: 500 };
+            var params = { pageSize: 500 };
 
-	            $http( {
-	                url: URLS.OPEN_URL + 'brands/', 
-	                method: 'GET',
-	                params: params 
-	                } )
-	                
-	                .success(function(itemsArray) {
-	                    //var items = [];
-	                    itemsArray.collection.items.forEach(function(itemData) {
-	                    	scope._pool.push(itemData);
-	                    });
-	                    //scope._pool = items;
-	                    //deferred.resolve(items);
-	                    deferred.resolve(scope._pool);
-	                })
-	                .error(function() {
-	                    deferred.reject();
-	                });
-	            	}
-	            return deferred.promise;
-	        }
+            $http( {
+                url: URLS.OPEN_URL + 'brands/', 
+                method: 'GET',
+                params: params 
+                } )
+                
+            .success(function(itemsArray) {
+                var items = [];
+                itemsArray.collection.items.forEach(function(itemData) {
+                	items.push(itemData);
+                });
+                deferred.resolve(items);
+            })
+            .error(function(error,b,c,d) {
+                deferred.reject();
+            });
+
+            return deferred.promise;
+        }
 	};
 	return brandsManager;
 }]);
@@ -170,6 +161,7 @@ services.service('itemsManager', ['$http', '$q', 'Item', 'URLS', function($http,
         loadItems: function(pageSize, pageIndex, query, brand) {
             var deferred = $q.defer();
             var scope = this;
+            scope._pool = {};
             
             if ( pageSize === undefined )
             	pageSize = 10;
@@ -184,9 +176,8 @@ services.service('itemsManager', ['$http', '$q', 'Item', 'URLS', function($http,
             	params['brand'] = brand ;
 
             $http( {
-                url: URLS.OPEN_URL + 'items/', 
-                method: 'GET',
-                params: params 
+                url: URLS.OPEN_URL + 'items/?'+$.param(params), 
+                method: 'GET' 
                 } )
                 
                 .success(function(itemsArray) {
@@ -210,6 +201,7 @@ services.service('itemsManager', ['$http', '$q', 'Item', 'URLS', function($http,
         loadItemsByUrl: function(url) {
             var deferred = $q.defer();
             var scope = this;
+            scope._pool = {};
             
             var params = {  };
 

@@ -50,6 +50,8 @@ services.service('navigation', function(){
 				var index = this.getParameterByName(this.prev().href, 'pageIndex');
 				var size = this.getParameterByName(this.prev().href, 'pageSize');
 				return (parseInt(index) + parseInt(size));
+			}else{
+				return 0;
 			}
 		},
 		pageSize: function(){
@@ -59,6 +61,8 @@ services.service('navigation', function(){
 				return this.getParameterByName(this.next().href, 'pageIndex');
 			}else if (this.hasPrev()) {
 				return this.getParameterByName(this.prev().href, 'pageIndex');
+			}else {
+				return 20;
 			}
 		},
 		getParameterByName: function (url, name) {

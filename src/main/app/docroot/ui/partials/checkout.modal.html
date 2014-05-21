@@ -1,0 +1,28 @@
+	<script type="text/ng-template" id="checkout.modal.html">
+<style type="text/css">
+  .css-form input.ng-invalid.ng-dirty {
+    background-color: #FA787E;
+  }
+ 
+  .css-form input.ng-valid.ng-dirty {
+    background-color: #78FA89;
+  }
+</style>
+        <div class="modal-header">
+            <h3 class="modal-title">Checkout</h3>
+        </div>
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+        <div class="modal-body" >
+            <form role="form" name="form" class="css-form" novalidate>
+		  		<div class="form-group">
+		    		<label for="pickupLocation">Pickup location</label>
+		    		<input type="text" placeholder="Enter a pickup location" class="form-control" ng-model="checkout.pickuplocation" ng-change="onChange()"
+						required >
+		  		</div>
+			</form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-disabled="form.$invalid" ng-click="ok()">Proceed to checkout</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>

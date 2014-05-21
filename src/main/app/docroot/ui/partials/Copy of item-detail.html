@@ -1,0 +1,60 @@
+<div class="item-images">
+  <img ng-src="{{mainImageUrl | https}}"
+       class="item"
+       >
+</div>
+
+<h1>{{item.name}}</h1>
+
+<p>{{item.description}}</p>
+
+
+item images < <ul class="item-thumbs">
+  <li ng-repeat="img in itemImages">
+    <img ng-src="{{img.href | https}}" ng-click="setImage(img)">
+  </li>
+</ul> > <HR>
+
+1 sku image to select sku < 
+<ul class="item-thumbs" >
+  <li ng-repeat="sku in item.getSkus()">
+    <img ng-src="{{sku.firstImage().href | https}}" ng-click="setCurrentSku(sku)">
+  </li>
+</ul> 
+>
+
+
+<hr>
+current sku {{sku.sku}} -> <BR>
+<ul class="item-thumbs">
+  <li>
+<dl>
+      <dt>sku</dt><dd>{{sku.sku}}</dd>
+      <dt>name</dt><dd>{{sku.name}}</dd>
+      <dt>desc</dt><dd>{{sku.summary}}</dd>
+      <dt>price</dt><dd>{{sku.price}}</dd>
+      <dt>available units</dt><dd>{{sku.stockQuantity}}</dd>
+    </dl>
+    Caracteristicas:
+    <dl>
+      <div ng-repeat="c in sku.data">
+        <dt>{{c.name}}</dt><dd>{{c.value}}</dd>
+      </div>
+    </dl>
+    <ul class="item-thumbs">
+    <li ng-repeat="img in sku.images()">
+      <img ng-src="{{img.href}}" ng-click="setImage(img)">
+    </li>
+  </ul>
+    Qty: <a href="#" editable-number="qty" e-min="1" e-max="{{maxQty}}"  >{{qty}}</a>
+    
+    <button ng-click="addToBasket()" ng-show="user.sessionIsActive">add to basket</button>&nbsp;
+    
+    <button ng-click="addToWishlist()" ng-disabled="skuInWishlist" ng-show="user.sessionIsActive">add to wishlist</button>
+    
+</li>
+</ul>
+
+
+
+

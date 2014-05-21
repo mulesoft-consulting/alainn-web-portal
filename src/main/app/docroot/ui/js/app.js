@@ -106,13 +106,18 @@ app.config([ '$routeProvider', '$stateProvider', '$urlRouterProvider',
           url: "/wishlist",
           templateUrl: 'partials/wishlist.html',
           controller: 'WishlistCtrl',
-          authenticate: false
+          authenticate: true
         })
         ;
   }]);
 
-app.run( function($rootScope, $state, $location, AuthService, AUTH_EVENTS ) {
+app.run( function($rootScope, $state, $location, AuthService, AUTH_EVENTS, editableOptions, editableThemes ) {
 
+  editableThemes.bs3.inputClass = 'input-sm';
+  editableThemes.bs3.buttonsClass = 'btn-sm';
+  editableOptions.theme = 'bs3';
+
+	
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
     	var authenticate = ( !(toState.authenticate===undefined) && toState.authenticate);
 
@@ -124,7 +129,7 @@ app.run( function($rootScope, $state, $location, AuthService, AUTH_EVENTS ) {
         	// User isn’t authenticated
     		$rootScope.toState = toState.name;
     		$rootScope.fromState = fromState.name;
-    		$location.path('/login');
+    		$location.path('/items');
           }
     });
     $rootScope.$on(AUTH_EVENTS.loginSuccess, function(){

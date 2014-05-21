@@ -37,7 +37,7 @@
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="ui" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="183b4ab3-eec5-4635-9ce1-a5ed843f08e3">
+    <flow SubFlow="false" name="ui" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="ae4e8385-856e-4f81-a673-d10181038577">
         <properties>
             <property name="initialState"/>
             <property name="processingStrategy2"/>

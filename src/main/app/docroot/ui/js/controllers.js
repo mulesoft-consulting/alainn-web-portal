@@ -6,20 +6,39 @@ var controllers = angular.module('controllers', []);
 
 
 controllers.controller('ApplicationController', 
-		function ($scope, $rootScope, $location, $http, URLS, $state, itemsManager, basketService, Session, AUTH_EVENTS, AuthService, $modal) {
+		function ($scope, $rootScope, $location, $http, URLS, $state, itemsManager, basketService, Session, AUTH_EVENTS, 
+				AuthService, $modal, brandsManager, navigation, wishlistService) {
 	$scope.user = {
 		username: Session.getUser(),
 		sessionIsActive: Session.isActive()
-	} 
+	}; 
+	$scope.brands = [];
 	
 	basketService.loadAllItems().then(function(){
-	    $rootScope.$broadcast('basketLoaded');
+	    //$rootScope.$broadcast('basketLoaded');
 	});
+	
+	wishlistService.loadAllItems().then(function(){
+		$rootScope.$broadcast('wishlistLoaded');
+	});
+	
 
+    brandsManager.findAll().then(function(response){
+    	$scope.brands = response;
+    });
+	
 	$scope.$on(AUTH_EVENTS.loginSuccess, function(){
 		$scope.user.username = Session.getUser();
 		$scope.user.sessionIsActive = Session.isActive();
+		
+		basketService.loadAllItems().then(function(){
+		    //$rootScope.$broadcast('basketLoaded');
+		});
+		wishlistService.loadAllItems().then(function(){
+			$rootScope.$broadcast('wishlistLoaded');
+		});
 	});
+	
 	$scope.$on(AUTH_EVENTS.logoutSuccess, function(){
 		$scope.user.username = '';
 		$scope.user.sessionIsActive = Session.isActive();
@@ -50,15 +69,31 @@ controllers.controller('ApplicationController',
 
 	};
 	
+
+	
+	$scope.search=function(search){
+    	itemsManager.loadItems($scope.pageSize, $scope.pageIndex, search.query, $scope.brand).then(function(response) {
+	        navigation.last('');
+	        $rootScope.$broadcast('pageLoaded', response);
+	    });
+    };
+    
 });
 
-controllers.controller('NavbarController', ['$scope', 'basketService', 
-  function($scope, basketService) {
+controllers.controller('NavbarController', ['$scope', 'basketService', 'wishlistService' ,
+  function($scope, basketService, wishlistService) {
     $scope.title = "hola";
+    $scope.basketItemCount = 0;
+    $scope.wishlistItemCount = 0;
     
     $scope.$on('basketLoaded', function() {
       $scope.basketItemCount = basketService.itemCount();
-
+      $('#menuBasket').popover('hide');
+    });
+    
+    $scope.$on('wishlistLoaded', function(){
+    	$scope.wishlistItemCount = wishlistService.itemCount();
+    	$('#menuWishlist').popover('hide');
     });
   }
 ]);
@@ -73,8 +108,11 @@ controllers.controller('CatalogListCtrl', ['$scope', '$location', '$stateParams'
 	
 	$scope.nav = navigation;
 
-	$scope.$on('pageLoaded', function(){
-		navigation.setLinks($scope.browseLinks);
+	$scope.$on('pageLoaded', function(event, args){
+    	$scope.items = args.items;
+        $scope.browseLinks = args.links; 
+
+        navigation.setLinks(args.links);
         
 		$scope.nextPageLink = navigation.next();
         $scope.prevPageLink = navigation.prev();
@@ -86,19 +124,17 @@ controllers.controller('CatalogListCtrl', ['$scope', '$location', '$stateParams'
     	$scope.pageIndex = navigation.pageIndex();
     	
     	$scope.pageIndexRange = parseInt($scope.pageIndex)+parseInt($scope.pageSize);
+    	
 	});
 	
 	if ( navigation._last!='' ){
 	    itemsManager.loadItemsByUrl(navigation._last).then(function(response) {
-	        $scope.items = response.items;
-	        $scope.browseLinks = response.links; 
-	        $scope.$emit('pageLoaded');
+	        $scope.$emit('pageLoaded', response);
 	    });
 	}else{
 		itemsManager.loadItems($scope.pageSize, $scope.pageIndex).then(function(response) {
-	        $scope.items = response.items;
-	        $scope.browseLinks = response.links; 
-	        $scope.$emit('pageLoaded');
+			navigation.last('');
+	        $scope.$emit('pageLoaded', response);
 	    });
 	}
 	
@@ -109,35 +145,39 @@ controllers.controller('CatalogListCtrl', ['$scope', '$location', '$stateParams'
 
     	itemsManager.loadItemsByUrl( newUrl ).then(function(response) {
     		navigation.last(newUrl);
-            $scope.items = response.items;
-            $scope.browseLinks = response.links; 
-            $scope.$emit('pageLoaded');
+            $scope.$emit('pageLoaded', response);
         });
     };
     
-    $scope.submit=function(){
-    	itemsManager.loadItems($scope.pageSize, $scope.pageIndex, $scope.query, $scope.brand).then(function(response) {
-	        $scope.items = response.items;
-	        $scope.browseLinks = response.links; 
-	        $scope.$emit('pageLoaded');
-	    });
-    };
     
-    brandsManager.findAll().then(function(response){
-    	$scope.brands = response;
-    });
     
   }]);
 
-controllers.controller('CatalogDetailCtrl', ['$scope', '$rootScope', '$location', '$stateParams', 'itemsManager', 'basketService', 'wishlistService', 
-  function($scope, $rootScope, $location, $stateParams, itemsManager, basketService, wishlistService ) {
+controllers.controller('CatalogDetailCtrl', ['$scope', '$rootScope', '$location', '$stateParams', 
+                                             'itemsManager', 'basketService', 'wishlistService', 'Session', 'AUTH_EVENTS',
+  function($scope, $rootScope, $location, $stateParams, itemsManager, basketService, wishlistService, Session, AUTH_EVENTS ) {
+	
+	$scope.canAddToWishlist = false;
+	$scope.canAddToBasket = false;
+	
 	$scope.$on('skuLoaded', function(){
         $scope.qty = 1;
         $scope.maxQty = $scope.sku.stockQuantity;
         $scope.basketIconUrl = "img/cart-add.png";
         $scope.setImage($scope.sku.firstImage());
         //$scope.addToBasketDisabled = (basketService.findSku($scope.sku.sku)===undefined);
-        $scope.skuInWishlist = (wishlistService.findSku($scope.sku.sku)!=null);
+        $scope.canAddToWishlist = (wishlistService.findSku($scope.sku.sku)==null) && Session.isActive();
+        $scope.canAddToBasket = Session.isActive();
+	});
+	
+	$scope.$on(AUTH_EVENTS.loginSuccess, function(){
+		$scope.canAddToWishlist = (wishlistService.findSku($scope.sku.sku)==null) && Session.isActive();
+        $scope.canAddToBasket = Session.isActive();
+	});
+	
+	$scope.$on(AUTH_EVENTS.logoutSuccess, function(){
+		$scope.canAddToWishlist = false;
+		$scope.canAddToBasket = false;
 	});
 	
 	wishlistService.loadAllItems();
@@ -161,21 +201,29 @@ controllers.controller('CatalogDetailCtrl', ['$scope', '$rootScope', '$location'
       $scope.$broadcast('skuLoaded');
     }
 
-    $scope.addToBasket = function(){
-      //$scope.basketIconUrl = "img/cart-add-disabled.png";
-      //$scope.addToBasketDisabled = true;
 
-      basketService.addItem( $scope.sku.sku, $scope.sku.price, $scope.qty ).then(function(data) {
-        basketService.loadAllItems().then(function(){
-          $rootScope.$broadcast('basketLoaded');
-        });
+    $scope.addToBasket = function(){
+    	var btn = $('#addToBasketButton');
+    	btn.button('loading');
+    	$('#menuBasket').popover('show');
+    	basketService.addItem( $scope.sku.sku, $scope.sku.price, $scope.qty ).then(function(data) {
+    		btn.button('reset');
+    		basketService.loadAllItems().then(function(){
+    			//$rootScope.$broadcast('basketLoaded');
+    		});
       });
     };
     
     $scope.addToWishlist= function() {
+    	var btn = $('#addToWishlistButton');
+    	btn.button('loading');
+
+  	  $('#menuWishlist').popover('show');
     	wishlistService.addItem( $scope.sku.sku ).then(function(data) {
+      	  btn.button('reset');
     		wishlistService.loadAllItems().then(function(){
-    			$scope.$broadcast('skuLoaded');
+    			$scope.$broadcast('wishlistLoaded');
+    			$('#menuWishlist').popover('hide');
     		});
     		
           });
@@ -199,7 +247,7 @@ controllers.controller('BasketListOnFooterController', ['$scope', '$rootScope', 
     $scope.removeFromBasket= function(basketItem) {
       basketService.removeItem(basketItem).then( function(data) {
           basketService.loadAllItems().then(function(){
-            $rootScope.$broadcast('basketLoaded');
+            //$rootScope.$broadcast('basketLoaded');
           });
       });
     };
@@ -207,30 +255,48 @@ controllers.controller('BasketListOnFooterController', ['$scope', '$rootScope', 
 }])
 
 
-controllers.controller('BasketCtrl', ['$scope', '$rootScope', 'basketService', 
-  function($scope, $rootScope, basketService) {
+controllers.controller('BasketCtrl', ['$scope', '$rootScope', 'basketService',  '$modal', 
+  function($scope, $rootScope, basketService,  $modal) {
       $scope.checkoutDisabled = (basketService.itemCount()==0);
 
       $scope.$on('basketLoaded', function() {
         $scope.basketItems = basketService._items;
         $scope.checkoutDisabled = (basketService.itemCount()==0);
+  		$('#menuBasket').popover('hide');
+  		
       });
 
       $scope.checkout = function() {
-        basketService.checkout().then( function() {
-          //alert('checked out');
-          basketService.loadAllItems().then(function(){
-              $rootScope.$broadcast('basketLoaded');
-              //$scope.basketItems = basketService._items;
-            });
-        });
+    	  $("#checkoutButton").button('loading');
+//    	  basketService.checkout().then( function() {
+//    		  basketService.loadAllItems().then(function(){
+//    			  $("#checkoutButton").button('reset');
+//    		  });
+//    	  });
+		    var modalInstance = $modal.open({
+		      templateUrl: 'checkout.modal.html',
+		      controller: ModalCheckoutController
+		    });
+
+		    modalInstance.result.then(function (checkoutData) {
+		    	$("#checkoutButton").button('reset');
+	    	  basketService.checkout().then( function() {
+	    		  basketService.loadAllItems().then(function(){
+	    			  //$("#checkoutButton").button('reset');
+	    		  });
+	    	  });
+		    }, function () {
+		    	$("#checkoutButton").button('reset');
+		    	//$log.info('Modal dismissed at: ' + new Date());
+		    });
       }
 
       $scope.removeFromBasket= function(basketItem) {
-        basketService.removeItem(basketItem.sku).then( function(data) {
+    	$('#deleteFromBasketButton-'+basketItem.index).button('loading');
+      	
+    	basketService.removeItem(basketItem.sku).then( function(data) {
             basketService.loadAllItems().then(function(){
-              $rootScope.$broadcast('basketLoaded');
-              //$scope.basketItems = basketService._items;
+              //$rootScope.$broadcast('basketLoaded');
             });
         });
       };
@@ -242,30 +308,84 @@ controllers.controller('BasketCtrl', ['$scope', '$rootScope', 'basketService',
     	  basketService.removeItem(basketItem.sku).then( function(data) {
     		  basketService.addItem( basketItem.sku, quantity, basketItem.price ).then(function(data) {
 		            basketService.loadAllItems().then(function(){
-		              $rootScope.$broadcast('basketLoaded');
+		              //$rootScope.$broadcast('basketLoaded');
 		            });
 		        });
     	  		});
       };
+      
+      basketService.loadAllItems();
   }]);
 
-controllers.controller('WishlistCtrl', ['$scope', 'wishlistService',
-  function($scope, wishlistService) {
+
+var ModalCheckoutController = function ($scope, $rootScope, $modal, $modalInstance, $interval, AuthService, AUTH_EVENTS) {
+
+	$scope.checkout = { pickuplocation: 'Mongomery Mall' };
+	$scope.message = "";
+	
+	$scope.onChange = function(){
+		this.clearAlerts();
+	}
+	
+	$scope.alerts = [];
+	
+	$scope.clearAlerts = function(){
+		$scope.alerts = [];
+	}
+	
+	$scope.closeAlert = function(index) {
+	    $scope.alerts.splice(index, 1);
+	  };
+	               
+	$scope.ok = function () {
+		this.clearAlerts();
+		$scope.alerts.push({msg: 'Checking out..'});
+		$modalInstance.close($scope.checkout);
+	};
+
+	$scope.cancel = function () {
+	    $modalInstance.dismiss('cancel');
+	};
+	
+	$scope.register = function (size) {
+	    var modalInstance = $modal.open({
+	      templateUrl: 'modal.registration.html',
+	      controller: ModalRegistrationController,
+	      size: size
+	    });
+
+	    modalInstance.result.then(function (registration, result) {
+	    	$scope.credentials.username = registration.username;
+	    	$scope.credentials.password = registration.password;
+	    	$scope.ok();
+	    }, function () {
+	    	//$log.info('Modal dismissed at: ' + new Date());
+	    });
+	};
+};
+
+
+
+controllers.controller('WishlistCtrl', ['$scope', '$rootScope', 'wishlistService',
+  function($scope, $rootScope, wishlistService) {
+	$scope.isEmpty = true;
+	
 	$scope.$on('wishlistLoaded', function(){
 		$scope.wishlist = wishlistService._items;
 	    $scope.isEmpty = wishlistService.itemCount()==0;
+  		$('#menuWishlist').popover('hide');
 	});
 	
 	$scope.removeFromWishlist = function(sku){
 		wishlistService.removeItem(sku.sku).then(function(){
 			wishlistService.loadAllItems().then(function(){
-				$scope.$broadcast('wishlistLoaded');
+				$rootScope.$broadcast('wishlistLoaded');
 			});
 		});
 	};
 
 	wishlistService.loadAllItems().then(function(){
-		$scope.$broadcast('wishlistLoaded');
+		$rootScope.$broadcast('wishlistLoaded');
 	});
   }
   ]);

@@ -40,6 +40,9 @@
   
   <script src="js/login.js"></script>
 
+<!--  TEMP -->
+    <link href="css/app.css" rel="stylesheet">
+
 <!-- Custom styles for this template -->
     <link href="css/theme.css" rel="stylesheet">
 
@@ -71,23 +74,45 @@
             <li is-active="current" current="/items"><a href="#/items">Catalog</a></li>
           </ul>
           <!-- search bar -->
-          <form class="navbar-form navbar-left" role="search" ng-show="current.indexOf('/items')==0">
+          <form class="navbar-form navbar-left" role="search" 
+          	ng-show="current.indexOf('/items')==0 && current.indexOf('/items/')!=0"
+          	novalidate>
           	<div class="row">
 		        <div class="form-group" >
-		          <input type="text" class="form-control" placeholder="Search">
-		        	<button type="submit" class="btn btn-default">Submit</button>
+			        <input type="text" class="form-control" placeholder="Search by name" ng-model="search.query">
+			        <button type="submit" class="btn btn-default" ng-click="search(search)">Submit</button>
 		        </div>
 	        </div>
 	      </form>
-	      
           <!--/.search bar -->
-       	  <p class="navbar-text navbar-right" ng-show="user.sessionIsActive">Signed in as {{user.username}} 
-       	  <a ng-show="user.sessionIsActive"  class="navbar-link" ng-click="logout()">(Logout)</a></p>
+
 	      <ul class="nav navbar-nav navbar-right">
-            <li is-active="current" current="/basket" ng-show="user.sessionIsActive" ><a href="#/basket">Basket ({{basketItemCount}})</a></li>
-            <li is-active="current" current="/wishlist" ng-show="user.sessionIsActive" ><a href="#/wishlist">MyWishlist</a></li>
-            <li is-active="current" current="/orders" ng-show="user.sessionIsActive" ><a href="#/orders">My Orders</a></li>
+            <li is-active="current" current="/basket" ng-show="user.sessionIsActive"
+             id="menuBasket"
+            data-container="body" data-toggle="popover" data-placement="bottom" data-content="Loading basket.." data-trigger="manual"
+             >
+            <a href="#/basket"
+            >Basket <span class="badge" >{{basketItemCount}}</span></a>
+            </li>
+            
+            <li is-active="current" current="/wishlist" ng-show="user.sessionIsActive" ><a href="#/wishlist"
+            id="menuWishlist"
+            data-container="body" data-toggle="popover" data-placement="bottom" data-trigger="manual" data-content="Loading wishlist.."
+            >MyWishlist <span class="badge">{{wishlistItemCount}}</span></a></li>
+
             <li  ng-show="!user.sessionIsActive" ><a ng-click="login()">Login</a></li>
+
+            <li class="dropdown"  ng-show="user.sessionIsActive">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.username}} <b class="caret"></b></a>
+	          <ul class="dropdown-menu">
+	            <li><a href="#/orders">My Orders</a></li>
+	            <li class="divider"></li>
+	            <li><a ng-show="user.sessionIsActive" ng-click="logout()">(Logout)</a></li>
+	          </ul>
+	        </li>
+
+            <li><a href="itms-services:///?action=download-manifest&amp;url=https%3A%2F%2Fc4rios.cloudhub.io%2FConnect4Retail.plist">iPhone app</a></li>
+	        
           </ul>
         </div>
         <!--/.nav-collapse -->
@@ -109,6 +134,7 @@
       </div>
     </div>
 
+
   <div class="view-container">
     <div ui-view></div>
   </div>
@@ -121,6 +147,7 @@
  -->  
   <div ng-include="'partials/login.modal.html'"/>
   <div ng-include="'partials/registration.modal.html'"/>
+  <div ng-include="'partials/checkout.modal.html'"/>
     
   
 </body>

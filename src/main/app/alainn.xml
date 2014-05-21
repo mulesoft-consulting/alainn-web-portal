@@ -19,33 +19,5 @@ http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/a
         <https:static-resource-handler resourceBase="${app.home}/docroot/ui" defaultFile="index.html"/>
     </flow>
     
-    <!-- 
-	<http:connector name="httpConnector" cookieSpec="netscape" validateConnections="true" sendBufferSize="0" 
-		receiveBufferSize="0" receiveBacklog="0" clientSoTimeout="10000" serverSoTimeout="10000" socketSoLinger="0" doc:name="HTTP\HTTPS">
-    </http:connector>
-
-    <apikit:config name="Router1" raml="api1.raml" consoleEnabled="true" consolePath="console" doc:name="Router1">
-    </apikit:config>
-    <apikit:config name="Router2" raml="api2.raml" consoleEnabled="true" consolePath="console" doc:name="Router2">
-    </apikit:config>
-
-    <flow name="alainnFlow1" doc:name="alainnFlow1">
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8082" path="api1" doc:name="HTTP" connector-ref="httpConnector"/>
-        <apikit:router config-ref="Router1" doc:name="APIkit Router"/>
-    </flow>
-    
-    <flow name="alainnFlow2" doc:name="alainnFlow2">
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8082" path="api2" doc:name="HTTP" connector-ref="httpConnector"/>
-        <apikit:router config-ref="Router2" doc:name="APIkit Router"/>
-    </flow>
-    
-    <flow name="get:/res:Router1" doc:name="get:/res:Router1">
-    	<set-payload value="respuesta1" doc:name="Set Payload"/>
-    </flow>
-    
-    <flow name="get:/res:Router2" doc:name="get:/res:Router2" >
-    	<set-payload value="respuesta2" doc:name="Set Payload"/>
-    </flow>
-      -->
      
 </mule>

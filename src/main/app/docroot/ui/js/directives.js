@@ -22,6 +22,21 @@ app.directive('formAutofillFix', function ($timeout) {
     }
   };
 });
+
+
+app.directive('navDisabled', function($animate) {
+    return  function(scope, element, attrs) {
+//    	if ( attrs.navDisabled=='true' ){
+//	          element.addClass('disabled');
+//	  	}else{
+//	  		element.removeClass('disabled');
+//	  	}
+	    scope.$watch(attrs.navDisabled, function ngShowWatchAction(value){
+		      //$animate[toBoolean(value) ? 'addClass' : 'removeClass'](element, 'disabled');
+		    });
+
+    }
+});
 /*
 var ngShowDirective = ['$animate', function($animate) {
 	  return function(scope, element, attr) {
