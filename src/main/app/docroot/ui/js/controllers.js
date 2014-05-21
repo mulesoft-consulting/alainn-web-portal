@@ -72,8 +72,9 @@ controllers.controller('ApplicationController',
 
 	
 	$scope.search=function(search){
-    	itemsManager.loadItems($scope.pageSize, $scope.pageIndex, search.query, $scope.brand).then(function(response) {
+    	itemsManager.loadItems($scope.pageSize, $scope.pageIndex, search.query, search.brand).then(function(response) {
 	        navigation.last('');
+	        $location.path('/items');
 	        $rootScope.$broadcast('pageLoaded', response);
 	    });
     };

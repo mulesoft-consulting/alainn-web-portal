@@ -74,13 +74,14 @@
             <li is-active="current" current="/items"><a href="#/items">Catalog</a></li>
           </ul>
           <!-- search bar -->
-          <form class="navbar-form navbar-left" role="search" 
-          	ng-show="current.indexOf('/items')==0 && current.indexOf('/items/')!=0"
+          <form class="form-inlinr navbar-form navbar-left" role="search" 
+          	ng-show="current.indexOf('/items')==0 "
           	novalidate>
           	<div class="row">
-		        <div class="form-group" >
-			        <input type="text" class="form-control" placeholder="Search by name" ng-model="search.query">
-			        <button type="submit" class="btn btn-default" ng-click="search(search)">Search</button>
+		        <div class="form-group form-group-inline" >
+			        <input type="text" class="form-control input-sm" placeholder="Brand" ng-model="search.brand" typeahead="value for value in brands | filter:$viewValue | limitTo:8" >
+			        <input type="text" class="form-control input-sm" placeholder="Search by name" ng-model="search.query">
+			        <button type="submit" class="btn btn-default btn-sm" ng-click="search(search)">Search</button>
 		        </div>
 	        </div>
 	      </form>

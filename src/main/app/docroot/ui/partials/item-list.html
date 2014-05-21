@@ -11,8 +11,13 @@
 	</div>
 </div>
  -->
- 
-
+ <!-- 
+ <form novalidate >
+		   Brand: <input type="text" ng-model="brand" typeahead="value for value in brands | filter:$viewValue | limitTo:8" class="form-control">
+	    	Text:	<input ng-model="query">
+	      	<img ng-src="img/search.png" ng-click="submit()"/>
+	  </form>
+ -->
 
 <div class="list-group" ng-repeat="item in items">
     <a href="#/items/{{item.id}}" class="list-group-item">
