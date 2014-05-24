@@ -87,7 +87,7 @@ img.item {
   margin-bottom: 2em;
   background-color: white;
   padding: 2em;
-  /*height: 400px;*/
+  height: 400px;
   width: 300px;
   display: none;
 }

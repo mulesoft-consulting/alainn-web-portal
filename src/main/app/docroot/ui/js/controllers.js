@@ -105,8 +105,8 @@ controllers.controller('HomeController', ['$scope',
   }]);
 
 controllers.controller('CatalogListCtrl', 
-		['$scope', '$rootScope', '$location', '$stateParams', 'itemsManager', 'navigation', 'brandsManager', 'wishlistService', 'AUTH_EVENTS', 'Session', 'basketService' ,
-  function($scope, $rootScope, $location, $stateParams, itemsManager, navigation, brandsManager, wishlistService, AUTH_EVENTS, Session, basketService) {
+  function($scope, $rootScope, $location, $stateParams, itemsManager, navigation, brandsManager, 
+		  wishlistService, AUTH_EVENTS, Session, basketService, $timeout) {
 	
 	$scope.nav = navigation;
 
@@ -150,8 +150,8 @@ controllers.controller('CatalogListCtrl',
         });
     };
     
-    
     //Details
+    $scope.skulist = [];
     
     $scope.canAddToWishlist = false;
 	$scope.canAddToBasket = false;
@@ -165,6 +165,8 @@ controllers.controller('CatalogListCtrl',
         $scope.setImage($scope.sku.firstImage());
     	$scope.canAddToWishlist = !($scope.sku===undefined) && Session.isActive() && (wishlistService.findSku($scope.sku.sku)==null) ;
         $scope.canAddToBasket = Session.isActive();
+        
+        //setTimeout(initCarousel, 100);
 	});
 	
 	$scope.$on(AUTH_EVENTS.loginSuccess, function(){
@@ -193,6 +195,9 @@ controllers.controller('CatalogListCtrl',
 
             var sku  = item.getFirstSku();
             scope.setCurrentSku(sku);
+            scope.skulist = item.getSkus();
+            
+            $timeout(initCarousel, 500);
         });
     	
     	
@@ -235,7 +240,7 @@ controllers.controller('CatalogListCtrl',
             });
       };
     
-  }]);
+  });
 
 controllers.controller('BasketCtrl', ['$scope', '$rootScope', 'basketService',  '$modal', 
   function($scope, $rootScope, basketService,  $modal) {

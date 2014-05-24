@@ -6,10 +6,9 @@ var filters = angular.module('filters', []);
 
 filters.filter( 'https', function(_) {
 	  return function(url) {
-		  /*if (url === undefined)
-			  return url;
-		  return url.replace( 'http:', 'https:');
-		  */
+//		  if (url === undefined)
+//			  return url;
+//		  url = url.replace( 'http:', 'https:');
 		  return url;
 	  };
 	});
@@ -18,11 +17,15 @@ filters.filter( 'localhost', function(_) {
 	  return function(item) {
 		  if (item === undefined)
 			  return item;
-		  return item.replace( 'localhost:8082', 'alainn-api-qa.qa2.cloudhub.io');
+		  return item.replace( 'localhost:8082', 'alainn-api.cloudhub.io');
 	  };
 	});
 
-
+filters.filter( 'positionInList' , function(_) {
+	return function(item, list) {
+	    return list.indexOf(item);
+	  }
+});
 
 filters.filter( 'dataValue', function(_) {
   return function(item, key) {

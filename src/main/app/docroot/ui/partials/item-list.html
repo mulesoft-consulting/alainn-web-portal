@@ -3,7 +3,7 @@
 <div class="row">
 	<div class="col-md-4">
 
-<!--  Content  -->
+<!--  Content - LIST -->
 		<div class="list-group" ng-repeat="item in items">
 			<a href="#" ng-click="selectItem(item)" class="list-group-item" >
 				<h4 class="list-group-item-heading">{{item.name}}</h4> <img
@@ -12,27 +12,23 @@
 				<p class="list-group-item-text">Summary: {{item.summary}}</p>
 			</a>
 		</div>
-		<!-- 
-		<div class="list-group" ng-repeat="item in items">
-			<a href="#/items/{{item.id}}" class="list-group-item">
-				<h4 class="list-group-item-heading">{{item.name}}</h4> <img
-				ng-src="{{item.getThumbUrl() | https}}">
-				<p class="list-group-item-text">Brand: {{item.brand}}</p>
-				<p class="list-group-item-text">Summary: {{item.summary}}</p>
-			</a>
-		</div>
-		 -->
-<!--  /Content  -->
+		
+<!--  /Content LIST -->
+		<div ng-include src="'partials/browse.include.html'"></div>
 
 	</div>
 	<div class="col-md-8">
+	
 		<div style="position: fixed" class="panel panel-default" ng-show="sku!=null">
 			<div class="panel-body">
 <!--  Content  -->
 
 				<div class="row">
 					<div class="col-md-4">
-			            <img  class="img-rounded item" ng-src="{{mainImageUrl | https}}" >
+					 	<div>
+					 		<img  class="img-rounded item" ng-src="{{mainImageUrl | https}}" >
+			            </div>
+			            
 					</div>
 					<div class="col-md-8">
 					
@@ -74,16 +70,33 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-						<ul class="item-thumbs" >
-					        <li ng-repeat="sku in item.getSkus()">
-					            <img ng-src="{{sku.firstImage().href | https}}" ng-click="setCurrentSku(sku)">
-					        </li>
-					    </ul>
+					
+					
+ 
+		<div class="wrapper">
+            <div class="jcarousel-wrapper">
+                <div class="jcarousel">
+                    <ul>
+	                    <li ng-repeat="sku in skulist">
+				            <img ng-src="{{sku.firstImage().href | https}}" ng-click="setCurrentSku(sku)">
+				        </li>
+                    </ul>
+                </div>
+
+                <a href="#" class="jcarousel-control-prev">&lsaquo;</a>
+                <a href="#" class="jcarousel-control-next">&rsaquo;</a>
+
+                <p class="jcarousel-pagination"></p>
+            </div>
+        </div>
+
 					</div>
 				</div>
 
 			
-			
+			<!-- 
+                    	
+	         -->
 <!--  /Content  -->
 			</div>
 		</div>
@@ -92,4 +105,4 @@
 
 
 
-<div ng-include src="'partials/browse.include.html'"></div>
+
