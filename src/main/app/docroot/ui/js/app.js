@@ -50,6 +50,9 @@ app.factory('AuthInterceptor', function ($rootScope, $q, Session) {
 				var user = Session.getUser();
 				config.headers['access_token']=token;
 				config.headers['x-user-id']=user;
+				
+				//
+				config.headers['X-Anypoint-ContractKey']='538284a6e4b0624da810fad8';
 			}
 			
 			return config || $q.when(config);
