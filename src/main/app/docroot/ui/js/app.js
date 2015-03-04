@@ -1,160 +1,131 @@
+(function () {
 'use strict';
 
-/* App Module */
-
-var app = angular.module('myApp', [
-  'ngRoute',
-  //'ngStorage',
-  'ui.router',
-  'ngTouch',
-  'ui.bootstrap',
-  'underscore',
-  'xeditable', 
-  'controllers',
-  'services',
-  'filters',
-  'animations',
-  'ngMessages'
-]);
-
-
-
-app.constant( 'URLS', {
-//	BASE_URL: 'https://alainn-api.cloudhub.io/omni-channel-api/v1.0/'
-		BASE_URL: 'https://alainn-api.cloudhub.io/open/omni-channel-api/v1.0/'
-	, OPEN_URL: 'https://alainn-api.cloudhub.io/open/omni-channel-api/v1.0/'
-	, ACCESS_TOKEN: 'http://alainn-oauth-provider-proxy.cloudhub.io/access-token'
-
-});
-
-app.constant('AUTH_EVENTS', {
-	  loginSuccess: 'auth-login-success',
-	  loginFailed: 'auth-login-failed',
-	  logoutSuccess: 'auth-logout-success',
-	  sessionTimeout: 'auth-session-timeout',
-	  notAuthenticated: 'auth-not-authenticated',
-	  notAuthorized: 'auth-not-authorized',
-	  registrationSuccess: 'registration-success',
-	  registrationFailed: 'registration-failed'
-});
-
-
-app.factory('AuthInterceptor', function ($rootScope, $q, Session) {
-	return {
-		// optional method
-		request: function(config) {
-	        // do something on success
-			
-			if ( Session.isActive() ){
-				var token = Session.getToken();
-				var user = Session.getUser();
-				config.headers['access_token']=token;
-				config.headers['x-user-id']=user;
-				
-			}
-			
-			//
-			config.headers['X-Anypoint-ContractKey']='538284a6e4b0624da810fad8';
-
-			return config || $q.when(config);
-		}
-	}
-});
-
-
-	
-	
-app.config([ '$routeProvider', '$stateProvider', '$urlRouterProvider',
-  function(  $routeProvider, $stateProvider, $urlRouterProvider ) {
-	
+	var app = angular.module('alainn', ['ngRoute', 'ui.router', 'ui.bootstrap', 'xeditable']);
+		
+	app.config([ '$routeProvider', '$stateProvider', '$urlRouterProvider', function($routeProvider, $stateProvider, $urlRouterProvider) {
+		
 		$urlRouterProvider
-		.when('', '/items');
-		   // For any unmatched url, send to /route1
-	      $urlRouterProvider.otherwise("/items");
-
-      $stateProvider
-        .state('login', {
-            url: "/login",
-            templateUrl: "partials/login.html",
-            controller: 'LoginController'
-        })
-        .state('items', {
-            url: "/items",
-            templateUrl: "partials/item-list.html",
-            controller: 'CatalogListCtrl'
-        })
-        .state('items/item', {
-            url: "/items/:itemId",
-            templateUrl: "partials/item-detail.html",
-            controller: 'CatalogDetailCtrl'
-        })
-        .state('basket', {
-          url: "/basket",
-          templateUrl: 'partials/basket.html',
-          controller: 'BasketCtrl',
-          authenticate: true
-        })
-        .state('orders', {
-            url: "/orders",
-            templateUrl: 'partials/orders.html',
-            controller: 'OrdersController',
-            authenticate: true
-          })
-        .state('orders/order', {
-            url: "/orders/:orderId",
-            templateUrl: 'partials/order-detail.html',
-            controller: 'OrdersDetailController',
-            authenticate: true
-          })
-        .state('wishlist', {
-          url: "/wishlist",
-          templateUrl: 'partials/wishlist.html',
-          controller: 'WishlistCtrl',
-          authenticate: true
-        })
-        ;
-  }]);
-
-app.run( function($rootScope, $state, $location, AuthService, AUTH_EVENTS, editableOptions, editableThemes ) {
-
-  editableThemes.bs3.inputClass = 'input-sm';
-  editableThemes.bs3.buttonsClass = 'btn-sm';
-  editableOptions.theme = 'bs3';
-
+			.when('', '/items');
+		  
+		$stateProvider
+		    .state('login', {
+				url: "/login",
+				templateUrl: "partials/login.html",
+				controller: 'loginController'
+				})
+			.state('items', {
+	            url: "/items",
+	            templateUrl: "partials/item-list.html",
+	            controller: 'CatalogListCtrl'
+	        })
+	        .state('items/item', {
+	            url: "/items/:itemId",
+	            templateUrl: "partials/item-detail.html",
+	            controller: 'CatalogDetailCtrl'
+	        })
+	        .state('basket', {
+	          url: "/basket",
+	          templateUrl: 'partials/basket.html',
+	          controller: 'BasketCtrl',
+	          authenticate: true
+	        })
+	        .state('orders', {
+	            url: "/orders",
+	            templateUrl: 'partials/orders.html',
+	            controller: 'OrdersController',
+	            authenticate: true
+	          })
+	        .state('orders/order', {
+	            url: "/orders/:orderId",
+	            templateUrl: 'partials/order-detail.html',
+	            controller: 'OrdersDetailController',
+	            authenticate: true
+	          })
+	        .state('wishlist', {
+	          url: "/wishlist",
+	          templateUrl: 'partials/wishlist.html',
+	          controller: 'WishlistCtrl',
+	          authenticate: true
+	        })
+	        /*
+			 * Following state presuppose that server-side redirects will be configured.
+			 * These are implemented by the /auth flow in Mule
+			 * See https://github.com/angular-ui/ui-router/wiki/Frequently-Asked-Questions#how-to-configure-your-server-to-work-with-html5mode
+			 */
+			.state('auth-code', {
+				url: '/auth?token&state',
+				onEnter: function($state, $stateParams, sessionService, $rootScope, AUTH_EVENTS) {
+					// store the token. This will be picked up by our authInterceptor. See nzp-security module.
+					sessionService.create($stateParams.token);
+					$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+					$state.go('items');
+				}
+			})
+			.state('error', {
+				url: '/auth?error',
+				onEnter: function($state, $stateParams) {
+					$state.go('login', $stateParams.error);
+				}
+			});
+	}]);
 	
-    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-    	var authenticate = ( !(toState.authenticate===undefined) && toState.authenticate);
-
-    	$rootScope.currentState = toState.url;
-    	$rootScope.current = $location.$$url;
-	  	
-    	
-    	if ( authenticate && !AuthService.isAuthenticated() ){
-        	// User isn’t authenticated
-    		$rootScope.toState = toState.name;
-    		$rootScope.fromState = fromState.name;
-    		$location.path('/items');
-          }
+	app.constant( 'URLS', {
+		BASE_URL: 'https://alainn-omni-channel-api.cloudhub.io/v1.0/', 
+		REG_URL: 'https://alainn-registration-api.cloudhub.io/v1.0/'
+	});
+	
+	app.constant('AUTH_EVENTS', {
+		  loginSuccess: 'auth-login-success',
+		  loginFailed: 'auth-login-failed',
+		  logoutSuccess: 'auth-logout-success',
+		  sessionTimeout: 'auth-session-timeout',
+		  notAuthenticated: 'auth-not-authenticated',
+		  notAuthorized: 'auth-not-authorized',
+		  registrationSuccess: 'registration-success',
+		  registrationFailed: 'registration-failed'
+	});
+	
+	// Code to call upon http interception
+	app.factory('httpInterceptor', function authInterceptor(sessionService, $rootScope, AUTH_EVENTS) {
+    	return {
+    		// Override request method to add the Authorization header to all requests
+    		request: function request(config) {
+				config.headers = config.headers || {};
+				if (sessionService.isActive()) {
+					config.headers.Authorization = 'Bearer ' + sessionService.getToken();
+				}
+				return config;
+    		},
+    		
+    	   responseError: function(rejection) {
+    	      if (rejection.status === 401 || rejection.status === 403) {
+    	    	  $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+    	      } else if (rejection.status === 400) {
+    	    	  if ('invalid_grant' === rejection.data.error) {
+    	    		  $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+    	    	  }
+    	      }
+    	      return rejection;
+    	    }
+    	};
     });
-    $rootScope.$on(AUTH_EVENTS.loginSuccess, function(){
-		var url = ($rootScope.toState === undefined ? "items": $rootScope.toState);
-		//$state.transitionTo(url);
+	
+	// Make every http request intercepted with authInterceptor
+	app.config(function config($httpProvider) {
+		$httpProvider.interceptors.push('httpInterceptor');
 	});
-    $rootScope.$on(AUTH_EVENTS.logoutSuccess, function(){
-    	var isProtected = ( !($state.current.authenticate===undefined) && $state.current.authenticate);
-    	if (isProtected)
-    		$state.go('items');
-	});
-});
+	  
+	
+	app.run( function($modal, $rootScope, $state, $location, editableOptions, editableThemes ) {
 
-app.config(function ($httpProvider) {
-  $httpProvider.interceptors.push([
-    '$injector',
-    function ($injector) {
-      return $injector.get('AuthInterceptor');
-    }
-  ]);
-});
+		  editableThemes.bs3.inputClass = 'input-sm';
+		  editableThemes.bs3.buttonsClass = 'btn-sm';
+		  editableOptions.theme = 'bs3';
+		    
+	});
+
+})();
 
 
 

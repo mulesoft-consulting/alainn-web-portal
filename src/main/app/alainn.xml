@@ -1,23 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:https="http://www.mulesoft.org/schema/mule/https"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.4.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
+<mule xmlns:secure-property-placeholder="http://www.mulesoft.org/schema/mule/secure-property-placeholder"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:https="http://www.mulesoft.org/schema/mule/https"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.5.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/secure-property-placeholder http://www.mulesoft.org/schema/mule/secure-property-placeholder/current/mule-secure-property-placeholder.xsd">
 
-	<https:connector name="httpsConnector" cookieSpec="netscape" validateConnections="true" sendBufferSize="0" 
-		receiveBufferSize="0" receiveBacklog="0" clientSoTimeout="10000" serverSoTimeout="10000" socketSoLinger="0" doc:name="HTTP\HTTPS">
-        <https:tls-key-store path="keystore.jks" keyPassword="changeit" storePassword="changeit"/>
-    </https:connector>
-    
-    <flow name="ui" doc:name="ui">
-        <https:inbound-endpoint exchange-pattern="request-response" host="localhost" path="ui" 
-        	port="${https.port}" doc:name="localhost/ui" connector-ref="httpsConnector"/>
-        <https:static-resource-handler resourceBase="${app.home}/docroot/ui" defaultFile="index.html"/>
-    </flow>
-    
-     
+	<https:connector name="httpsConnector" cookieSpec="netscape"
+		validateConnections="true" sendBufferSize="0" receiveBufferSize="0"
+		receiveBacklog="0" clientSoTimeout="10000" serverSoTimeout="10000"
+		socketSoLinger="0" doc:name="HTTP\HTTPS">
+		<service-overrides sessionHandler="org.mule.session.NullSessionHandler" />
+		<https:tls-key-store path="keystore.jks"
+			keyPassword="changeit" storePassword="changeit" />
+
+		<https:tls-server path="x.jks" storePassword="changeit" />
+
+	</https:connector>
+	<secure-property-placeholder:config
+		name="Secure_Property_Placeholder" key="${vault.key}" location="config.${env}.properties"
+		doc:name="Secure Property Placeholder" />
+
+	<flow name="ui">
+		<https:inbound-endpoint exchange-pattern="request-response" connector-ref="httpsConnector"
+			host="localhost" path="ui" port="${https.port}" doc:name="localhost/ui" />
+		<http:static-resource-handler
+			resourceBase="${app.home}/docroot/ui" defaultFile="index.html"
+			doc:name="HTTP Static Resource Handler" />
+	</flow>
+
+	<!-- Url rewriting. Convert the html5 type urls to angular default /#/x/y/z 
+		type -->
+	<flow name="rewrite">
+		<https:inbound-endpoint exchange-pattern="request-response" connector-ref="httpsConnector"
+			address="https://localhost:${https.port}/auth" doc:name="localhost/auth" />
+		<choice doc:name="error?">
+			<when expression="#[message.inboundProperties.containsKey('error')]">
+				<message-properties-transformer
+					doc:name="302, Location">
+					<add-message-property key="Location"
+						value="#['/ui/#/login?error=' + message.inboundProperties.error]" />
+					<add-message-property key="http.status" value="302" />
+				</message-properties-transformer>
+			</when>
+			<otherwise>
+				<set-variable variableName="state"
+					value="#[message.inboundProperties.state]" doc:name="state" />
+				<set-payload
+					value="#[ [ 'redirect_uri' : '${redirect.uri}/auth', 'grant_type' : 'authorization_code', 'code' : message.inboundProperties.code ] ]"
+					doc:name="Token Request" />
+				<https:outbound-endpoint exchange-pattern="request-response"
+					connector-ref="httpsConnector" method="POST"
+					contentType="application/x-www-form-urlencoded" doc:name="Authorization Server"
+					host="${ping.federate.host}" password="${client.secret}"
+					path="${ping.federate.path}" port="9031" user="${client.id}" />
+				<set-variable variableName="accessToken" value="#[json:/access_token]"
+					doc:name="accessToken" />
+				<message-properties-transformer
+					doc:name="302, Location">
+					<add-message-property key="Location"
+						value="#['${redirect.uri}/ui/#/auth?token=' + accessToken + '&amp;state=' + flowVars.state]" />
+					<add-message-property key="http.status" value="302" />
+				</message-properties-transformer>
+			</otherwise>
+		</choice>
+
+	</flow>
+
+
 </mule>

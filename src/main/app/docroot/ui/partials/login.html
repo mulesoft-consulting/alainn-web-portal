@@ -1,22 +1,134 @@
-<div class="modal-header">
-            <h3 class="modal-title">Login</h3>
+<div >
+    <script type="text/ng-template" id="myModalContent.html">
+        <!--
+		<div class="modal-header">
+            <h3 class="modal-title">I'm a modal!</h3>
+        </div>
+        <div class="modal-body">
+            <ul>
+                <li ng-repeat="item in items">
+                    <a ng-click="selected.item = item">{{ item }}</a>
+                </li>
+            </ul>
+            Selected: <b>{{ selected.item }}</b>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div> -->
+
+
+	<style type="text/css">
+  .css-form input.ng-invalid.ng-dirty {
+    background-color: #FA787E;
+  }
+ 
+  .css-form input.ng-valid.ng-dirty {
+    background-color: #78FA89;
+  }
+</style>
+		<div class="modal-header">
+            <h3 class="modal-title">Registration to Alainn web portal</h3>
         </div>
 		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
-        <div class="modal-body">
-            <form role="form" name="form1">
-		  <div class="form-group">
-		  	<p>Welcome : <span>{{credentials.username}}</span></p>
-		    <label for="exampleInputEmail1">Username</label>
-		    <input type="text" placeholder="Enter name"  class="form-control" ng-model="credentials.username" required ng-change="onChange()">
-		  </div>
-		  <div class="form-group">
-		    <label for="exampleInputPassword1">Password</label>
-		    <input type="password" placeholder="Password" id="exampleInputPassword1" class="form-control" ng-model="credentials.password" required ng-change="onChange()">
-		  </div>
-		</form>
+        <div class="modal-body" >
+            <form role="form" name="form" class="css-form" novalidate>
+		  		<div class="form-group">
+		  			<p>Welcome : <span>{{registration.username}}</span></p>
+		    		<label for="exampleInputEmail1">Email</label>
+		    		<input type="email" placeholder="Enter an email"  class="form-control" ng-model="registration.username"  ng-change="onChange()"
+						required >
+		  		</div>
+		  		<div class="form-group">
+		    		<label for="exampleInputPassword1">Password</label>
+		    		<input type="password" placeholder="my password" id="exampleInputPassword1" class="form-control" ng-model="registration.password" 
+						 ng-change="onChange()"
+						ng-minlength="5"
+         				ng-maxlength="20"
+         				required
+						>
+		  		</div>
+		  		<div class="form-group">
+		    		<label for="exampleInputFirstName">First Name</label>
+		    		<input type="text" placeholder="First Name" id="exampleInputFirstName" class="form-control" ng-model="registration.userdata.firstName" 
+						 ng-change="onChange()"
+						ng-minlength="2"
+         				ng-maxlength="50"
+         				required
+						>
+		  		</div>
+		  		<div class="form-group">
+		    		<label for="exampleInputLastName">Last Name</label>
+		    		<input type="text" placeholder="Last Name" id="exampleInputLastName" class="form-control" ng-model="registration.userdata.lastName" 
+						 ng-change="onChange()"
+						ng-minlength="2"
+         				ng-maxlength="50"
+         				required
+						>
+		  		</div>
+		  		<div class="form-group">
+		    		<label for="exampleInputMobileNumber">Mobile Number</label>
+		    		<input type="text" placeholder="+1 555 555 5555" id="exampleInputMobileNumber" class="form-control" ng-model="registration.userdata.mobileNumber" 
+						 ng-change="onChange()"
+						ng-minlength="5"
+         				ng-maxlength="20"
+         				required
+						>
+		  		</div>
+		  		<div class="form-group">
+		    		<label for="exampleInputNotificationPreferences">Notification Preferences: </label>
+				</div>
+
+				<div class="form-group">
+					<div class="form-control">
+		    			<label for="notificationPreferences-sms">SMS</label>
+						<input type="checkbox" placeholder="notificationPreferences-sms" id="notificationPreferences-sms" 
+							ng-model="registration.userdata.notificationPreferences.sms" 
+						 	ng-change="onChange()" >
+					</div>
+					<div class="form-control">
+					<label for="notificationPreferences-email">Email</label>
+					<input type="checkbox" placeholder="notificationPreferences-email" id="notificationPreferences-email"  
+						ng-model="registration.userdata.notificationPreferences.email" 
+						 ng-change="onChange()" >
+					</div>
+					<div class="form-control">
+					<label for="notificationPreferences-email">Web</label>
+					<input type="checkbox" placeholder="notificationPreferences-web" id="notificationPreferences-web" 
+						ng-model="registration.userdata.notificationPreferences.web" 
+						 ng-change="onChange()" >
+					</div>
+					<div class="form-control">
+					<label for="notificationPreferences-applepush">Apple Push</label>
+					<input type="checkbox" placeholder="notificationPreferences-applepush" id="notificationPreferences-applepush"  
+						ng-model="registration.userdata.notificationPreferences.applePush" 
+						 ng-change="onChange()" >
+					</div>
+		  		</div>
+			</form>
         </div>
-		Not a user? <a ng-click="register()">register here</a>
         <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok(credentials)">OK</button>
+            <button class="btn btn-primary" ng-disabled="form.$invalid" ng-click="ok()">Register</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
+      
+    </script>
+
+    <div ng-show="selected">Selection from a modal: {{ selected }}</div>
+          <!-- Jumbotron -->
+      <div class="jumbotron">
+        <h1>Álainn Cosmetics</h1>
+        <div class="row">
+        	<div class="col-md-4">
+			  <img class="img-responsive" src="img/alainn.png" />
+			</div>
+			<div class="col-md-8">
+				<p>Haven´t got an Account with us? <a class="btn btn-lg btn-success" ng-click="register()" role="button">Register now</a></p>
+       		 	<p>Otherwise go right ahead and <a class="btn btn-lg btn-success" ng-click="signIn()" role="button">Sign in</a></p>
+			</div>
+		</div>
+        
+      </div>
+
+    </div>
+</div>

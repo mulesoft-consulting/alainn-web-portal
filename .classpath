@@ -8,5 +8,8 @@
 	<classpathentry kind="src" output="target/test-classes" path="src/test/resources"/>
 	<classpathentry kind="src" path="src/main/api"/>
 	<classpathentry kind="con" path="MULE_LIB/APIkit/org.mule.tooling.apikit"/>
+	<classpathentry excluding="docroot/ui/|docroot/" kind="src" path="src/main/app"/>
+	<classpathentry kind="src" path="mappings"/>
+	<classpathentry kind="con" path="MULE_LIB/Secure Property Placeholder/org.mule.tooling.ui.contribution.secure-property-placeholder.3.5.0"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
