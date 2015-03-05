@@ -1,23 +1,6 @@
 <div >
     <script type="text/ng-template" id="myModalContent.html">
-        <!--
-		<div class="modal-header">
-            <h3 class="modal-title">I'm a modal!</h3>
-        </div>
-        <div class="modal-body">
-            <ul>
-                <li ng-repeat="item in items">
-                    <a ng-click="selected.item = item">{{ item }}</a>
-                </li>
-            </ul>
-            Selected: <b>{{ selected.item }}</b>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()">OK</button>
-            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-        </div> -->
-
-
+        
 	<style type="text/css">
   .css-form input.ng-invalid.ng-dirty {
     background-color: #FA787E;
@@ -114,18 +97,22 @@
       
     </script>
 
-    <div ng-show="selected">Selection from a modal: {{ selected }}</div>
-          <!-- Jumbotron -->
+     
       <div class="jumbotron">
-        <h1>Álainn Cosmetics</h1>
+        <h1 class="text-center text-primary">Álainn Cosmetics</h1>
         <div class="row">
+        	<div class="col-md-1" />
         	<div class="col-md-4">
 			  <img class="img-responsive" src="img/alainn.png" />
 			</div>
-			<div class="col-md-8">
-				<p>Haven´t got an Account with us? <a class="btn btn-lg btn-success" ng-click="register()" role="button">Register now</a></p>
-       		 	<p>Otherwise go right ahead and <a class="btn btn-lg btn-success" ng-click="signIn()" role="button">Sign in</a></p>
+			<div class="col-md-6">
+				<div class="col-md-9">
+					<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+					<p>Haven´t got an Account with us? <a class="btn btn-lg btn-success" ng-click="register()" role="button">Register now</a></p>
+	       		 	<p>Otherwise go right ahead and <a class="btn btn-lg btn-success" ng-click="signIn()" role="button">Sign in</a></p>
+       		 	</div>
 			</div>
+			<div class="col-md-1"/>
 		</div>
         
       </div>

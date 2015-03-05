@@ -10,7 +10,7 @@
 		  
 		$stateProvider
 		    .state('login', {
-				url: "/login",
+				url: "/login?error",
 				templateUrl: "partials/login.html",
 				controller: 'loginController'
 				})
@@ -105,8 +105,10 @@
     	    	  if ('invalid_grant' === rejection.data.error) {
     	    		  $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
     	    	  }
+    	      } else if (rejection.status === 404) {
+    	    	  // ignore, we want to handle this for registration call
+    	    	  return rejection;
     	      }
-    	      return rejection;
     	    }
     	};
     });

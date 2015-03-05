@@ -4,7 +4,17 @@
 	var app = angular.module('alainn');
 
 
-	app.controller('loginController', function ($scope, $modal, $log, authenticationService) {
+	app.controller('loginController', function ($scope, $modal, $log, authenticationService, $stateParams) {
+
+		$scope.alerts = [];
+		
+		if ($stateParams.error) {
+			$scope.alerts.push({type: 'danger', msg: 'Sorry, but you must be signed in to see our Products!' });
+		}
+		
+		$scope.closeAlert = function(index) {
+			  $scope.alerts.splice(index, 1);
+	      };
 
 		  
 		  $scope.register = function () {
@@ -36,7 +46,7 @@
 		// Please note that $modalInstance represents a modal window (instance) dependency.
 		// It is not the same as the $modal service used above.
 
-		app.controller('registrationController', function ($scope, $modalInstance, registrationService) {
+		app.controller('registrationController', function ($scope, $modalInstance, registrationService, authenticationService, $timeout) {
 
 		  $scope.alerts = [];
 		  
@@ -76,8 +86,12 @@
 			registrationService.register($scope.registration).then(function(regResults){
 				$scope.clearAlerts();
 				if ( regResults.succesful ){
-					$scope.alerts.push({type: 'success', msg: 'Welcome' });
-					$modalInstance.close($scope.selected.item);
+					$scope.alerts.push({type: 'success', msg: 'Welcome ' + $scope.registration.userdata.firstName + '. Go ahead and sign in!' });
+					$timeout(function() {
+						$modalInstance.close();
+						authenticationService.requestCode();
+					}, 2000);
+					
 				}else{
 					$scope.alerts.push({type: 'danger', msg: regResults.message });
 				}	

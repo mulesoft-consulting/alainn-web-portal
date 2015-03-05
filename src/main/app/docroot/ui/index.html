@@ -75,16 +75,17 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Álainn Cosmetics</a>
+          <!-- <a class="navbar-brand" href="#">Álainn Cosmetics</a> -->
+          
         </div>
         <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
+          <ul class="nav navbar-nav" ng-show="user.sessionIsActive">
             <li is-active="current" current="/items"><a href="#/items">Catalog</a></li>
           </ul>
           <!-- search bar -->
           <form class="form-inlinr navbar-form navbar-left" role="search" 
           	
-          	novalidate>
+          	novalidate ng-show="user.sessionIsActive">
           	<div class="row">
 		        <div class="form-group form-group-inline" >
 			        <input type="text" class="form-control input-sm" placeholder="Brand" ng-model="search.brand" typeahead="value for value in brands | filter:$viewValue | limitTo:8" >
